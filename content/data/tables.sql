@@ -96,3 +96,9 @@ CREATE TABLE IF NOT EXISTS `drafts_medias` (
       `media_id` int(11) NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS `tags_drafts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `draft_id` int(11) NOT NULL,
+  `tag_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;

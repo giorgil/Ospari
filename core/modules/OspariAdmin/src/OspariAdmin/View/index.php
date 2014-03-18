@@ -6,7 +6,7 @@ $draftPager = $this->draftPager;
 <div class="col-lg-12">
     <?php echo '<h1>'.$title.'</h1>'; ?>
 <?php if( !$this->isWritable  ): ?>
-    <p class="alert alert-info">Web server cannot write in to the upload folder</p>
+    <p class="alert alert-info"> <i class="fa fa-info-circle"></i> Web server cannot write in to the upload folder</p>
 <?php endif; ?> 
 <?php if( $draftPager->count() == 0 ): ?>
     <p>Welcome to Ospari. <a href="<?php echo OSPARI_ADMIN_PATH.'/draft/create' ?>" class="bold"><i class="fa fa-plus"></i> Write your first post.</a></p>

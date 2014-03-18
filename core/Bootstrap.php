@@ -44,7 +44,6 @@ Class Bootstrap {
         }
     }
     public function handleExecption(\Exception $exc) {
-
         if (!$this->hasDBConfig()) {
             include ( __DIR__ . '/modules/OspariAdmin/src/OspariAdmin/View/tpl/headers.php' );
             echo '<style>body{padding:0px !important;}</style><div class="col-lg-12">';
@@ -53,9 +52,23 @@ Class Bootstrap {
             echo '</div></body></html>';
             return;
         }
+        
+         
 
         $prevException = $exc->getPrevious();
         if (is_object($prevException) && !isset($_GET['code'])) {
+            
+            
+            if ($prevException instanceof \PDOException) {
+                //Database not found
+               
+                include ( __DIR__ . '/modules/OspariAdmin/src/OspariAdmin/View/tpl/headers.php' );
+                echo '<style>body{padding:0px !important;}</style><div class="col-lg-12">';
+                echo '<h1>'.$exc->getMessage().'</h1>';
+                echo '<pre>'.$this->exceptionToString($exc).'</pre>';
+                echo '</div></body></html>';
+                return;
+            }
 
             $code = $prevException->getCode();
 
@@ -180,6 +193,13 @@ Class Bootstrap {
         $result = $db->query($sql, \Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
         $r = $result->count();
         return (1 == $r);
+    }
+    
+    public function exceptionToString(\Exception $exc){
+        $str  =  $exc->__toString();
+        $str = str_replace($_SERVER['DOCUMENT_ROOT'], '', $str);
+        
+        return $str;
     }
 
 }

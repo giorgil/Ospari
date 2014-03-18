@@ -27,7 +27,7 @@ class SettingController extends BaseController {
          $req = $setting->toHttpRequest($req);
          
          
-         
+        
         $form = $this->createForm($view, $req);
         $res->setViewVar('form', $form);
         return $res->buildBody('setting/edit.php');

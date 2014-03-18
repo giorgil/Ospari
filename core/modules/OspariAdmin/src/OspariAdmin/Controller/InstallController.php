@@ -225,7 +225,13 @@ class InstallController {
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB",
             
-            "ALTER TABLE  `" . OSPARI_DB_PREFIX . "users` ADD  `rkey` VARCHAR( 255 ) NULL AFTER  `email`"
+    "ALTER TABLE  `" . OSPARI_DB_PREFIX . "users` ADD  `rkey` VARCHAR( 255 ) NULL AFTER  `email`",
+    "CREATE TABLE IF NOT EXISTS `" . OSPARI_DB_PREFIX . "drafts` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `draft_id` int(11) NOT NULL,
+        `tag_id` int(11) NOT NULL,
+        PRIMARY KEY (`id`)
+      ) ENGINE=InnoDB"
             
         );
     }
