@@ -57,7 +57,13 @@ Class Bootstrap {
 
         $prevException = $exc->getPrevious();
         if (is_object($prevException) && !isset($_GET['code'])) {
-            
+            $code = $prevException->getCode();
+             if ($code == '42S02') {
+                //Table not found on database
+                // redirect to install
+                \header('location: ' . OSPARI_URL . '/install?code=' . $code);
+                exit(1);
+            }
             
             if ($prevException instanceof \PDOException) {
                 //Database not found

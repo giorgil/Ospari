@@ -185,6 +185,7 @@ class InstallController {
 "CREATE TABLE IF NOT EXISTS `" . OSPARI_DB_PREFIX . "users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` char(100) NOT NULL,
+  `rkey` VARCHAR( 255 )NOT NULL,
   `name` char(120) NOT NULL,
   `password` varchar(255) NOT NULL,
   `cover` varchar(255) DEFAULT NULL,
@@ -224,9 +225,8 @@ class InstallController {
       `media_id` int(11) NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB",
-            
-    "ALTER TABLE  `" . OSPARI_DB_PREFIX . "users` ADD  `rkey` VARCHAR( 255 ) NULL AFTER  `email`",
-    "CREATE TABLE IF NOT EXISTS `" . OSPARI_DB_PREFIX . "drafts` (
+      
+    "CREATE TABLE IF NOT EXISTS `" . OSPARI_DB_PREFIX . "tags_drafts` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `draft_id` int(11) NOT NULL,
         `tag_id` int(11) NOT NULL,
