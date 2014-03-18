@@ -8,7 +8,7 @@
 
 namespace OspariAdmin\Service;
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/core/vendor/Swift/swift_required.php';
+//require_once $_SERVER['DOCUMENT_ROOT'] . '/core/vendor/swiftmailer/swiftmailer/swift_required.php';
 
 /**
  * Description of SwiftMailer

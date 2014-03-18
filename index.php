@@ -7,18 +7,20 @@ require (__DIR__ . '/core/config/constants.php' );
 define('OSPARI_PATH', __DIR__);
 define('NZ_SESSION_TABLE', OSPARI_DB_PREFIX.'sessions');
 define('NZ_MODULE_PATH', __DIR__ . '/core/modules');
-define('NZ2_PATH', __DIR__ . '/core/vendor/NZ');
+define('NZ2_PATH', __DIR__ . '/core/vendor/28h/nz-core');
 define('Z2_PATH', __DIR__ . '/core/vendor/Zend');
+require  __DIR__ . '/core/vendor/autoload.php';
 
-require_once NZ2_PATH . '/app/ClassLoader.php';
+//require_once NZ2_PATH . '/app/ClassLoader.php';
 
 $loader = \NZ\ClassLoader::getInstance();
-$loader->registerAutoloadMap(NZ2_PATH . '/autoload_classmap.php');
+//$loader->registerAutoloadMap(NZ2_PATH . '/autoload_classmap.php');
 $loader->registerAutoloadMap(Z2_PATH . '/autoload_classmap.php');
 $loader->register();
 
-require __DIR__ . '/core/vendor/Handlebars/Autoloader.php';
-Handlebars\Autoloader::register();
+//require __DIR__ . '/core/vendor/xamin/handlebars/Autoloader.php';
+
+//Handlebars\Autoloader::register();
 
 require( __DIR__.'/core/Bootstrap.php' );
 require( __DIR__.'/core/compat.php' );

@@ -13,11 +13,12 @@ class InstallController {
     public function installAction(HttpRequest $req, HttpResponse $res) {
         $view = $res->getView();
         $this->setViewParts($view);
-        
         $bs = \Ospari\Bootstrap::getInstance();
+        if(!$this->checkPHPVersion()){
+            throw new \Exception('A PHP version >= 5.4.0 is required');
+        }
         if (!$bs->hasDBConfig()) {
             throw new \Exception('Invalid configuration');
-            ;
         }
 
         if (!$this->databaseExist()) {
@@ -46,9 +47,18 @@ class InstallController {
 
         return $res->buildBody('install/install.php');
     }
-
+    
     protected function validateForm(\NZ\BootstrapForm $form, $req) {
         return $form->validate($req);
+    }
+    
+    private function checkPHPVersion(){
+        if(version_compare(PHP_VERSION, '5.4.0')>=0){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     private function setViewParts(\NZ\View $view) {

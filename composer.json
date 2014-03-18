@@ -14,25 +14,10 @@
     "require": {
         "php": ">=5.2.4",
         "swiftmailer/swiftmailer":"*",
-        "28h/NZCore":"*",
-        "xamin/handlebars.php": "dev-master"
+        "xamin/handlebars.php": "dev-master",
+        "28h/nz-core": "dev-dev"
     },
     "config": {
-        "vendor-dir": "/core/vendor"
-    },
-    "repositories": [
-        {
-           "type":"package",
-           "package":{
-               "name":"NZCore",
-                "version": "dev-master",
-                "source":{
-                    "type": "git",
-                    "url": "https://github.com/28h/NZCore.git",
-                    "reference":""
-                }
-                
-           }
-        }
-    ]
+        "vendor-dir": "core/vendor"
+    }
 }

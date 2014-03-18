@@ -43,7 +43,6 @@ Class Bootstrap {
             $sess->user_id = $sess->getUser_id();
         }
     }
-
     public function handleExecption(\Exception $exc) {
 
         if (!$this->hasDBConfig()) {
