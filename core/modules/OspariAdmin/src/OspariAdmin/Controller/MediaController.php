@@ -48,7 +48,11 @@ class MediaController extends BaseController {
         } catch (\Exception $exc) {
             return $res->sendErrorMessageJSON($exc->getMessage());
         }
-        return $res->sendSuccessMessageJSON(OSPARI_URL.'/content/upload'.$media->large);
+        $json  = new \NZ\JsonView($res->getView());
+        $json->set('success', true);
+        $json->set('message', OSPARI_URL.'/content/upload'.$media->large);
+        $json->set('img_id', $media->id);
+        return $res->sendJson($json->render());
     }
     
     private function handleUpload(HttpRequest $req){

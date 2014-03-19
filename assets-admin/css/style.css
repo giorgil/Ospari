@@ -39,16 +39,45 @@ margin: 20px 0 20px;
 /*
  dropzone
 */
-/*.img-dropzone {
-    border: 1px solid rgba(0,0,0,0.03);
-    min-height: 360px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    background: rgba(0,0,0,0.03);
-    padding: 23px;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+.dz-default {
+    background-image:url("/assets-admin/img/upload-bg.png") !important;
+    background-position: center !important;
 }
 .img-dropzone.dz-clickable {
 cursor: pointer;
-}*/
+}
+.dropzone{
+    border: 1px solid rgba(36,32,32,0.28) !important;
+}
+.op-img-right{
+    float: right;
+}
+.op-img-left{
+    float: left;
+}
+.op-img-center{
+    text-align: center;
+    clear: both;
+}
+
+
+.op-img-relative { 
+   position: relative;
+}
+.op-img img {
+    cursor:pointer;
+    
+}
+.op-img-text { 
+   position: absolute; 
+   top: 0; 
+   left: 0; 
+   width: 100%;
+   color: white; 
+   font: bold 16px Helvetica, Sans-Serif; 
+   letter-spacing: -1px;  
+   background: rgb(0, 0, 0); /* fallback color */
+   background: rgba(0, 0, 0, 0.7);
+   padding: 3px;
+   width: 270px;
+}

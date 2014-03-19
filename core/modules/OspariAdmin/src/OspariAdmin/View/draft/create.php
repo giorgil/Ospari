@@ -146,13 +146,14 @@ URL: <span id="draft-slug-bx" class="bold">
                 $('#editor-preview').html(marked(content));
                 Ospari.doAutoSave = 1;
                 OspariEditor.bindDropZone();
+                Ospari.bindImgPositionEvent();
         },
         
         initMarkdown: function() {
             var content = $('#draft-content-textarea').val();
             $('#editor-preview').html(marked(content));
             $('#editor-preview-title').html('<h1>' + $('#nz-bt-title').val() + '</h1>');
-
+            Ospari.bindImgPositionEvent();
             $('#draft-content-textarea').keydown(function() {
                OspariEditor.previewMarkdown();
             }).autosize();
@@ -181,7 +182,7 @@ URL: <span id="draft-slug-bx" class="bold">
         },
         prepareDropzone: function( content ){
             $('#dropzone').remove();
-            var placeholder = '<div class="dropzone" id="dropzone"></div>';
+            var placeholder = '<div style="clear:both;" id="clear-dropzone"></div><div class="dropzone" id="dropzone"></div>';
             var text = content.replace('![]()', placeholder);
             return text;
         },
@@ -208,12 +209,11 @@ URL: <span id="draft-slug-bx" class="bold">
                             this.on("success", function(file, json, xmlHttp) { 
                                 if(json.success){
                                    var content =  $('#draft-content-textarea').val();
-                                    content  = content.replace('![]()','![alt text]('+json.message+' "Photo")');
+                                    content  = content.replace('![]()','<div id="op-img-'+json.img_id+'" class="op-img">![alt text]('+json.message+' "Photo")</div>');
                                      $('#draft-content-textarea').val(content);
                                       OspariEditor.previewMarkdown();
                                        Ospari.doAutoSave = 1;
-                                      console.log('ospari is '+Ospari.doAutoSave);
-                                      Ospari.autoSave();
+                                       Ospari.autoSave();
                                 }
                                 else{
                                     this.removeFile(file);
@@ -280,4 +280,8 @@ URL: <span id="draft-slug-bx" class="bold">
                 
             }
     );
+
 </script>
+<div id="draft-preview-content" class="hidden">
+
+</div>

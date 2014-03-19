@@ -164,7 +164,11 @@ Ospari = {
     preparePostData: function( form ){
         arr = $(form).serializeArray();
         var content = $('#editor-preview').html();
-        arr.push( { 'name': 'content', 'value':  content } ); 
+        var tmpContent = content.replace('id="dropzone"', 'id="dropzone-tmp"');
+        $('#draft-preview-content').html(tmpContent);
+        $('#dropzone-tmp').remove();
+        $('#clear-dropzone','#draft-preview-content').remove();
+        arr.push( { 'name': 'content', 'value':   $('#draft-preview-content').html() } ); 
         return arr;
     },
     
@@ -180,6 +184,58 @@ Ospari = {
     },
     getEditSlugBtnTpl: function(){
         return '<span><a href="#" title="Edit" onclick=" return Ospari.updateSlug();" id="edit-slug"> <i class="fa fa-edit"></i></a></span>';
+    },
+    bindImgPositionEvent:function(){
+        //$('.op-img').attr({"data-toggle":"tooltip", "data-placement":"auto", "data-title":"To reposition the image, click on it"}).tooltip();
+        $('#editor-preview img').unbind('click');
+        
+        $('#editor-preview img').on('click', 
+                function(){
+                       var tmpThis = $(this);
+                       var tpl ='<h4>Position Image</h4>'
+                                 +'<div class="btn-group" data-toggle="buttons">'
+                                 +'<label class="btn btn-default">'
+                                  +'<input type="radio" name="img-position" id="option1" value="op-img-left"> Left'
+                                +'</label>'
+                                +'<label class="btn btn-default">'
+                                  +'<input type="radio" name="img-position" id="option2" value="op-img-center"> Center'
+                                +'</label>'
+                                +'<label class="btn btn-default">'
+                                  +'<input type="radio" name="img-position" id="option3" value="op-img-right"> Right'
+                                +'</label>'
+                              +'</div>';
+                       bootbox.alert(tpl, function(){
+                           var position = $("input:radio[name='img-position']:checked").val();
+                           if(position !== undefined){
+                               tmpThis.closest('div').removeClass('op-img-left op-img-center op-img-right').addClass(position);
+                               Ospari.addClassToEltInEditor(tmpThis.closest('div').attr('id'), position);
+                           }
+                           
+                       } );
+                   })
+                           .addClass('op-img-priview');
+                   Ospari.bingImgHoverEvent();
+    },
+    bingImgHoverEvent: function(){
+        var elt = $('.op-img');
+        elt.unbind('hover');
+        elt.hover(function(){
+                   $(this).addClass('op-img-relative').append('<span class="op-img-text">Click on the image to reposition it</span>');
+            },function(){
+                 $('span.op-img-text').remove();
+                 $(this).removeClass('op-img-relative');
+            });  
+    },
+    addClassToEltInEditor: function(id, position){
+        var content = $('#draft-content-textarea').val();
+        var tmpContent = content.replace('id="'+id+'"', 'id="img-tmp-id"');
+        $('#draft-preview-content').html(tmpContent);
+        $('#img-tmp-id').removeClass('op-img-left op-img-center op-img-right').addClass(position);
+        tmpContent = $('#draft-preview-content').html();
+        tmpContent = tmpContent.replace('id="img-tmp-id"','id="'+id+'"');
+        $('#draft-content-textarea').val( tmpContent);
+        Ospari.doAutoSave = 1;
+        Ospari.autoSave();
     }
 
 };
