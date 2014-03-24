@@ -18,12 +18,6 @@ define('OSPARI_ADMIN_PATH', 'admin');
  */
 define('OSPARI_DB_PREFIX', 'op_');
 
-/*
- * For Sqlite no prefix is needed
- */
-//define('OSPARI_DB_PREFIX', '');
-
-
 if( getenv('APPLICATION_ENV') == 'local'){
     define('COOKIE_DOMAIN', '.ospari.loc');
     define('ENV', 'dev'); 
@@ -35,3 +29,8 @@ if( ENV == 'dev' ){
     error_reporting(-1);
     ini_set('display_errors', 'On');
 }
+
+/**
+ * Do not change !!!!
+ */
+define('OSPARI_VERSION', '0.2.0');

@@ -6,6 +6,7 @@ return array(
     'OspariAdmin\Controller\BaseController'    => __DIR__ . '/src/OspariAdmin/Controller/BaseController.php',
     'OspariAdmin\Controller\DraftController'   => __DIR__ . '/src/OspariAdmin/Controller/DraftController.php',
     'OspariAdmin\Controller\InstallController' => __DIR__ . '/src/OspariAdmin/Controller/InstallController.php',
+    'OspariAdmin\Controller\UpdateController' => __DIR__ . '/src/OspariAdmin/Controller/UpdateController.php',
     'OspariAdmin\Controller\MediaController'   => __DIR__ . '/src/OspariAdmin/Controller/MediaController.php',
     'OspariAdmin\Controller\SettingController' => __DIR__ . '/src/OspariAdmin/Controller/SettingController.php',
     'OspariAdmin\Controller\TagController'     => __DIR__ . '/src/OspariAdmin/Controller/TagController.php',

@@ -231,10 +231,12 @@ class DraftController extends BaseController {
         $form->createElement('title')
                 ->setAttribute('placeholder', 'title')
                 ->setRequired();
+        
         $form->createElement('code')
                 ->toTexArea()
                 ->setAttribute('rows', 10)
                 ->setAttribute('autofocus', 'autofocus')
+                ->setHelpText('Type "![]()" to upload photos.')
                 ->setAttribute('id', 'draft-content-textarea');
 
          

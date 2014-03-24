@@ -18,6 +18,13 @@ class BaseController {
     }
     
     public function indexAction( HttpRequest $req, HttpResponse $res ){
+        
+        $setting = new \OspariAdmin\Model\Setting();
+        if( $setting->ospari_version != OSPARI_VERSION ){
+            return $res->redirect( OSPARI_ADMIN_PATH.'/update'  );
+        }
+        
+        
         $user = $this->getUser();
         $map = new \NZ\Map();
         $map->user_id = $user->id;
