@@ -85,6 +85,7 @@ class PostController extends BaseController {
         if ($slug = $req->get('slug')) {
             $post = \Ospari\Model\Post::findOne(array('slug' => $slug ));
             if( $post ){
+                $post->increase('view_count', 1);
                 return $post;
             }
            

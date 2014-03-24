@@ -44,6 +44,7 @@ class Module {
             '/'.OSPARI_ADMIN_PATH.'/draft/auto-save' => array( __NAMESPACE__.'\Controller\DraftController',  'autoSaveAction' ),
             '/'.OSPARI_ADMIN_PATH.'/media/upload' => array( __NAMESPACE__.'\Controller\MediaController',  'uploadAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/edit/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'editAction' ),
+             '/'.OSPARI_ADMIN_PATH.'/draft/meta/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'metaAction' ),
             '/'.OSPARI_ADMIN_PATH.'/user' => array( __NAMESPACE__.'\Controller\UserController',  'editAction' ),
             '/'.OSPARI_ADMIN_PATH.'/media/upload' => array( __NAMESPACE__.'\Controller\MediaController',  'uploadAction' ),
             '/'.OSPARI_ADMIN_PATH.'/setting' => array( __NAMESPACE__.'\Controller\SettingController',  'editAction' ),
@@ -52,6 +53,7 @@ class Module {
             '/'.OSPARI_ADMIN_PATH.'/draft/edit-slug' => array( __NAMESPACE__.'\Controller\DraftController',  'updateSlugAction' ),
             '/'.OSPARI_ADMIN_PATH.'/password/reset' => array( __NAMESPACE__.'\Controller\AuthController',  'passwordResetAction' ),
             '/'.OSPARI_ADMIN_PATH.'/password/forgotten' => array( __NAMESPACE__.'\Controller\AuthController',  'passwordForgottenAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/update' => array( __NAMESPACE__.'\Controller\UpdateController',  'updateAction' ),
             '/install' => array( __NAMESPACE__.'\Controller\InstallController',  'installAction' ),
             
             

@@ -12,7 +12,7 @@ use NZ\HttpRequest;
 use NZ\HttpResponse;
 use \OspariAdmin\Model;
 
-class DraftController extends BaseController {
+class UpdateController extends BaseController {
 
     public function updateAction(HttpRequest $req, HttpResponse $res) {
         $setting = new Model\Setting();
@@ -21,11 +21,12 @@ class DraftController extends BaseController {
         if ($req->isPost()) {
             try {
                 $this->update($setting);
-                return $res->sendErrorMessageJSON('Ospari successfully updated.');
+                return $res->sendSuccessMessageJSON('Ospari successfully updated.');
             } catch (\Exception $e) {
                 return $res->sendErrorMessageJSON($e->getMessage());
             }
         }
+        return $res->buildBody('install/update.php');
     }
 
     protected function update($setting) {
@@ -42,7 +43,7 @@ class DraftController extends BaseController {
     }
 
     protected function getSql() {
-        return __DIR__ . '/../data/sql.php';
+        return include __DIR__ . '/../data/sql.php';
     }
 
 }

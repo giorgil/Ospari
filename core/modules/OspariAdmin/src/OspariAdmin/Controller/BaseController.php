@@ -29,7 +29,8 @@ class BaseController {
         $map = new \NZ\Map();
         $map->user_id = $user->id;
         $pager = \OspariAdmin\Model\Draft::getPager($map, $req, $perPage = 20);
-        
+        $postsPager = new \NZ\Pager(new \OspariAdmin\Model\Post(), array('state'=>  \OspariAdmin\Model\Post::STATE_PUBLISHED), 1, 10,array('view_count'=>'DESC'));
+        $res->setViewVar('mostViewedPosts', $postsPager->getItems());
         $res->setViewVar('draftPager', $pager);
         $res->setViewVar('isWritable', $this->isUploadFolderWritable());
         $res->buildBody('index.php');

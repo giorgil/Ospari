@@ -24,7 +24,7 @@ Ospari = {
         var path = location.pathname.replace(/\/(create|edit\/(.*))/, '/edit-slug');
         var callback = function(res) {
             if (res.success) {
-                $('#draft-slug-bx').html(res.message+Ospari.getEditSlugBtnTpl());
+                //$('#draft-slug-bx').html(res.message+Ospari.getEditSlugBtnTpl());
             } else {
                 bootbox.alert(res.message);
                 return false;
@@ -80,10 +80,12 @@ Ospari = {
         callback = function(res) {
             if (res.success) {
                 Ospari.doAutoSave = 0;
-                $('#auto-save-msg').html(res.message);
-                $('#draft-slug-bx').html(res.draft_slug+Ospari.getEditSlugBtnTpl());
-                $('#draft-preview-btn').html('<a href="'+Ospari.blogURL+'/preview?draft_id='+res.draft_id+'" target="_preview"><i class="fa fa-external-link"></i> Preview</a>');
-
+                //$('#auto-save-msg').html(res.message);
+                //$('#draft-slug-bx').html(res.draft_slug+Ospari.getEditSlugBtnTpl());
+                $('#preview-li').remove();
+                $('#meta-li').remove();
+                $('#draft-ul').append('<li id="meta-li"><a href="#" onclick=" return Ospari.addMeta();"><i class="fa fa-code"></i>Meta-Tags</a></li>');
+                $('#draft-ul').append('<li id="preview-li"><a href="'+Ospari.blogURL+'/preview?draft_id='+res.draft_id+'" target="_preview"><i class="fa fa-external-link"></i> Preview</a></li>');
                 $('#draft-id-input').val(res.draft_id);
                 ///draft/edit/48
                 if( history && history.pushState ){
@@ -145,9 +147,7 @@ Ospari = {
                         main: {
                             label: "Close",
                             className: "btn bold",
-                            callback: function() {
-
-                            }
+                            callback: function() {}
                         }
                     }
                 })
@@ -236,6 +236,45 @@ Ospari = {
         $('#draft-content-textarea').val( tmpContent);
         Ospari.doAutoSave = 1;
         Ospari.autoSave();
+    },
+    addMeta: function(){
+        var draft_id = $('#draft-id-input').val();
+        if(!draft_id){
+            bootbox.alert('Not auto saved yet');
+        }
+        
+        var path = location.pathname.replace(/\/(create|edit\/(.*))/, '/meta/'+draft_id);
+        var callback = function(res) {
+            if (res.success) {
+                //$('#draft-slug-bx').html(res.message+Ospari.getEditSlugBtnTpl());
+            } else {
+                bootbox.alert(res.message);
+                return false;
+            }
+        };
+        bootbox.dialog({
+                        message: $('#meta-form-script').html(),
+                        title: "Enter Meta",
+                        buttons: {
+                          
+                          cancel: {
+                            label: "<i class=\"fa fa-times\"></i> Cancel",
+                            className: "btn",
+                            callback: function() {
+                              
+                            }
+                          },
+                          save: {
+                            label: "<i class=\"fa fa-check\"></i> Save",
+                            className: "btn-primary",
+                            callback: function() {
+                                
+                                $.post(path, $('#meta-form').serialize(), callback);
+                            }
+                          }
+                        }
+                      });
+        
     }
 
 };

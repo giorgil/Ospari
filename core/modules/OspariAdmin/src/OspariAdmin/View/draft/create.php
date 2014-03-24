@@ -16,7 +16,14 @@ $this->setJS(OSPARI_URL . '/assets-admin/js/bootstrap-tagsinput.min.js');
 $this->setCSS(OSPARI_URL . '/assets-admin/wysihtml5/bootstrap-wysihtml5-0.0.2.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/dropzone.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap-tagsinput.css');
+$metaFormTpl ='<form class="form-horizontal" id="meta-form"  method="post">';
 
+
+foreach ($this->metaForm->getElements() as $el){
+    $metaFormTpl.=$el->toHTML_V3();
+}
+$metaFormTpl.= '</form>';
+    
 //echo $form->toHTML_V3(O);
 ?>
 <div class="col-lg-6">
@@ -73,32 +80,47 @@ $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap-tagsinput.css');
     </form>
 </div>
 <div class="col-lg-6">
-
+<!--
     <div class="col-lg-12">
 URL: <span id="draft-slug-bx" class="bold">
-            <?php if ($req->slug) {
-                echo $this->escape($req->slug);
+            <?php // if ($req->slug) {
+//                echo $this->escape($req->slug);
                 ?>
             <span> &NonBreakingSpace; <a href="#" title="Edit" onclick=" return Ospari.updateSlug();" id="edit-slug"><i class="fa fa-edit"></i></a></span>
             <?php
-            } else {
-                echo 'Would be generated from title.';
-            }
+//            } else {
+//                echo 'Would be generated from title.';
+//            }
             ?>
             </div>
                  </span>
-    
+    -->
 <div class="col-lg-12 text-right">
-    <span id="auto-save-msg" class="text-muted"></span>
+<!--    <span id="auto-save-msg" class="text-muted"></span>
 
      <span id="draft-preview-btn">
          <?php
-            if( $req->id ){
-                echo '<a href="'.OSPARI_URL.'/preview?draft_id='.$req->id.'" target="_preview"><i class="fa fa-external-link"></i> Preview</a>';
-            }
+//            if( $req->id ){
+//                echo '<a href="'.OSPARI_URL.'/preview?draft_id='.$req->id.'" target="_preview"><i class="fa fa-external-link"></i> Preview</a>';
+//            }
          ?>
          
-     </span>
+     </span>-->
+    <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      Operations
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu text-left" id="draft-ul">
+        <?php if ($req->slug) :?>
+        <li><a href="#" onclick=" return Ospari.updateSlug();" id="edit-slug"><i class="fa fa-edit"></i> Edit Url</a></li>
+        <?php endif;?>
+        <?php if($req->id):?>
+        <li id="meta-li"><a href="#" onclick=" return Ospari.addMeta();"><i class="fa fa-code"></i>Meta-Tags</a></li>
+        <li id="preview-li"><a href="<?php echo OSPARI_URL.'/preview?draft_id='.$req->id ?>" target="_preview"><i class="fa fa-external-link"></i> Preview</a></li>
+        <?php endif; ?>
+    </ul>
+  </div>
 </div>
 
 
@@ -246,6 +268,7 @@ URL: <span id="draft-slug-bx" class="bold">
                 Ospari.initDraft();
                 Ospari.blogURL = '<?php echo OSPARI_URL ?>'; 
                 Ospari.adminURL = '<?php echo OSPARI_URL.'/'.OSPARI_ADMIN_PATH ?>';
+                
                 $('#tag-input').tagsinput({
                     typeahead:{
                          source: function(query) {
@@ -281,6 +304,9 @@ URL: <span id="draft-slug-bx" class="bold">
             }
     );
 
+</script>
+<script id="meta-form-script" type="text/x-handlebars-template">
+  <?php echo $metaFormTpl; ?>
 </script>
 <div id="draft-preview-content" class="hidden">
 

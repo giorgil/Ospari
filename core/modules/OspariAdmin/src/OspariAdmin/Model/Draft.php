@@ -5,6 +5,7 @@ namespace OspariAdmin\Model;
 Class Draft extends \NZ\ActiveRecord {
 
     const STATE_PUBLISHED = 1;
+    const STATE_UNPUBLISHED =0;
 
     public function getTableName() {
         return OSPARI_DB_PREFIX.'drafts';
