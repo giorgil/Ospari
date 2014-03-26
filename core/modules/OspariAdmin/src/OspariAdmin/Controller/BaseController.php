@@ -25,17 +25,27 @@ class BaseController {
         }
         
         
-        $user = $this->getUser();
-        $map = new \NZ\Map();
-        $map->user_id = $user->id;
-        $pager = \OspariAdmin\Model\Draft::getPager($map, $req, $perPage = 20);
+        
         $postsPager = new \NZ\Pager(new \OspariAdmin\Model\Post(), array('state'=>  \OspariAdmin\Model\Post::STATE_PUBLISHED), 1, 10,array('view_count'=>'DESC'));
         $res->setViewVar('mostViewedPosts', $postsPager->getItems());
-        $res->setViewVar('draftPager', $pager);
         $res->setViewVar('isWritable', $this->isUploadFolderWritable());
         $res->buildBody('index.php');
     }
     
+    public function listAction(HttpRequest $req, HttpResponse $res ){
+        $user = $this->getUser();
+        $map = new \NZ\Map();
+        $map->user_id = $user->id;
+        $map->like = $req->get('query');
+        $pager = \OspariAdmin\Model\Draft::getPager($map, $req,20);
+        $res->setViewVar('draftPager', $pager);
+        $content = $res->getViewContent('tpl/drafts.php');
+        $json = new \NZ\JsonView($res->getView());
+        $json->setHtml($content);
+        $json->set('success', true);
+        return $res->sendJson($json->render());
+    }
+
     public function onPageNotFound( HttpRequest $req, HttpResponse $res ){
         $res->setStatusCode(404);
           $view = $res->getView();

@@ -109,7 +109,7 @@ class DraftController extends BaseController {
         }
         $post = \OspariAdmin\Model\Post::findOne(array('draft_id'=>$draft_id));
         if($post){
-            $post->delete();
+            $post->delete(array('id'=> $post->id));
             $draft = new \OspariAdmin\Model\Draft($draft_id);
             if($draft->id){
                 $draft->state = \OspariAdmin\Model\Draft::STATE_UNPUBLISHED;
@@ -134,23 +134,17 @@ class DraftController extends BaseController {
         if(!$draft_id){
             return $res->sendErrorMessageJSON('Invalid Identifier');
         }
-        $post = \OspariAdmin\Model\Post::findOne(array('draft_id'=>$draft_id));
-        if($post){
-            $post->delete();
-        }
+        
         $model = \OspariAdmin\Model\Draft::findOne(array('id'=>$draft_id));
         if(!$model){
             return $res->sendErrorMessageJSON('Model not found!');
         }
         $this->deleteDraft2Media($draft_id);
         $this->deleteDraft2Tag($draft_id);
+        $model->delete(array('id'=>$model->id));
         return $res->sendSuccessMessageJSON('ok');
 
     }
-    public function metaFormAction(HttpRequest $req, HttpResponse $res){
-        
-    }
-
     public function metaAction(HttpRequest $req, HttpResponse $res){
         if(!$req->isAjax()){
             return $res->sendErrorMessage('Bad Request!');
@@ -362,6 +356,7 @@ class DraftController extends BaseController {
         return $arr;
     }
     protected function createMetaForm(\NZ\HttpRequest $req , $view){
+        $req = $this->setReqWithMetaData($req);
         $form = new \NZ\BootstrapForm($view, $req);
         $form->createElement('meta-title')
                 ->setLabelText('Title')
@@ -375,5 +370,13 @@ class DraftController extends BaseController {
         $form->addCssClass('form-horizontal');
         
         return $form;
+    }
+    protected function setReqWithMetaData(\NZ\HttpRequest $req){
+        $draft_id = $req->getRouter('draft_id');
+        $metas = PostMeta::findAll(array('draft_id'=>$draft_id));
+        foreach ($metas as $meta){
+            $req->set($meta->key_name, $meta->key_value);
+        }
+        return $req;
     }
 }

@@ -109,6 +109,17 @@ return array(
         `draft_id` int(11) NOT NULL,
         `tag_id` int(11) NOT NULL,
         PRIMARY KEY (`id`)
+      ) ENGINE=InnoDB",
+    
+    "ALTER TABLE `".OSPARI_DB_PREFIX."posts` ADD view_count int(11) NOT NULL AFTER state",
+    
+    "CREATE TABLE IF NOT EXISTS `".OSPARI_DB_PREFIX."post_meta` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `draft_id` int(11) NOT NULL,
+        `key_name` char(100) NOT NULL,
+        `key_value` text,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `key_name` (`key_name`)
       ) ENGINE=InnoDB"
             
         );

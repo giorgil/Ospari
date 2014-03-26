@@ -1,4 +1,108 @@
- 
+(function($) {
+    $.fn.doPost = function(options) {
+        $.fn.doPost.defaults ={
+                    url:null, 
+                    data:null, 
+                    callback:function(res){
+                        if (res.success) {
+                        } else {
+                            bootbox.alert(res.message);
+                        }
+                    }, 
+                    timeOut:3000
+                    };
+        var opts = $.extend({},$.fn.doPost.defaults, options);
+        var t = window.setTimeout(
+                function() {
+                    $.post(opts.url, opts.data, opts.callback);
+                },
+                opts.timeOut
+                );
+
+        return t;
+
+    };
+
+    $.fn.cancelPost = function(t) {
+        window.clearTimeout(t);
+    };
+    
+    
+    
+}(jQuery));
+
+
+/***************************************************************************************************************/
+function try_delete(id,adminPath) {
+        try_delete.html = $('#row-' + id).html();
+        var url = adminPath+'/draft/delete/'+id;
+
+        var cb = function(res) {
+            if (res.success) {
+                $('#break-'+id).remove();
+            } else {
+                bootbox.alert(res.message);
+            }
+        };
+
+        timeOut = 4200;
+        var f = window.setTimeout(
+                function() {
+                    $('#row-' + id).fadeOut();
+                },
+                timeOut - 300
+                );
+        var t = $.fn.doPost({url:url, data:{}, callback:cb, timeout:timeOut});
+
+        try_delete.cancel = function() {
+
+            window.clearTimeout(f);
+            $.fn.cancelPost(t);
+            $('#row-' + id).html(try_delete.html);
+              return false;
+
+        };
+        var back = $('#undoTemplate').html();
+        back = back.replace('{id}',id);
+        $('#row-' + id).html(back);
+        return false;
+    }
+ /***********************************************************************/
+ function try_unpublish(id, adminPath){
+     var url =  adminPath+ '/draft/unpublish/'+id;
+     var cb = function(res) {
+            if (res.success) {
+                $('#post-'+id).fadeOut().remove();
+                $('.blog-status','#row-'+id).html('draft');
+                $('.blog-action','#row-'+id).html('<a href="#"  onclick=" return try_delete('+id+',\''+adminPath+'\');"><i class="fa fa-trash-o"></i></a>');
+                 bootbox.alert('<div class="alert alert-success" >Post is now unpublished!</div>');
+            } else {
+                bootbox.alert(res.message);
+            }
+        };
+      $('.fa-eye-slash','#row-'+id).removeClass('fa-eye-slash').addClass('fa-spinner fa-spin');
+     $.fn.doPost({url:url,data:{},timeout:0,callback:cb});
+ }
+ /*************************************************************************************************************/
+  function loadDrafts(url){
+      $('#draft-items-wrapper').addClass('text-center').html('<i class="fa fa-5x fa-spinner fa-spin"></i><br/><h3>loading ...</h3>');
+      var query = $('input[name="query_string"]').val();
+      if(!query){
+          query ='';
+      }
+      $.get(url ||'/admin/drafts',{query:query},function(res){
+          if(res.success){
+              $('#draft-items-wrapper').removeClass('text-center').html(res.html);
+          }
+          else{
+              $('#draft-items-wrapper').removeClass('text-center').html('<p class="alert alert-info">No draft found!</p>');
+          }
+      });
+      
+      return false;
+  }
+ /**************************************************************/   
+
 Ospari = {
     doAutoSave: 0,
     adminURL: '/admin',

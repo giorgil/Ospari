@@ -20,11 +20,14 @@ Class Draft extends \NZ\ActiveRecord {
     }
 
     static public function getPager($map, $req, $perPage = 20) {
-        $where = array();
+        $where = new \Zend\Db\Sql\Where();
         if( $map->user_id ){
-            $where['user_id'] = $map->user_id;
+            $where->equalTo('user_id', $map->user_id);
         }
         
+        if($map->like){
+            $where->like('title', '%'.$map->like.'%');
+        }
         return new \NZ\Pager(new Draft(), $where, $req->getInt('page'), $perPage, $order = 'id DESC');
     }
 
