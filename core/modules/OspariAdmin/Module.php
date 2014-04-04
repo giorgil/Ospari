@@ -57,6 +57,9 @@ class Module {
             '/'.OSPARI_ADMIN_PATH.'/password/reset' => array( __NAMESPACE__.'\Controller\AuthController',  'passwordResetAction' ),
             '/'.OSPARI_ADMIN_PATH.'/password/forgotten' => array( __NAMESPACE__.'\Controller\AuthController',  'passwordForgottenAction' ),
             '/'.OSPARI_ADMIN_PATH.'/update' => array( __NAMESPACE__.'\Controller\UpdateController',  'updateAction' ),
+            
+             '/'.OSPARI_ADMIN_PATH.'/editor' => array( __NAMESPACE__.'\Controller\DraftController',  'renderEditorAction' ),
+            
             '/install' => array( __NAMESPACE__.'\Controller\InstallController',  'installAction' ),
             
             

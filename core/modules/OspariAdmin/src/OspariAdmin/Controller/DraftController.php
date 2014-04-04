@@ -19,6 +19,13 @@ class DraftController extends BaseController {
     public function editAction(HttpRequest $req, HttpResponse $res) {
          return $this->createAction($req, $res);
     }
+    public function renderEditorAction( HttpRequest $req, HttpResponse $res ){
+        
+        
+        
+        $res->buildBody('draft/editor.php');
+    }
+
     public function updateSlugAction( HttpRequest $req, HttpResponse $res ){
          $user = $this->getUser();
          if($req->isPOST()){
