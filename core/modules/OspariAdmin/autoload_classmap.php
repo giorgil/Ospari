@@ -11,6 +11,8 @@ return array(
     'OspariAdmin\Controller\TagController'     => __DIR__ . '/src/OspariAdmin/Controller/TagController.php',
     'OspariAdmin\Controller\UpdateController'  => __DIR__ . '/src/OspariAdmin/Controller/UpdateController.php',
     'OspariAdmin\Controller\UserController'    => __DIR__ . '/src/OspariAdmin/Controller/UserController.php',
+    'OspariAdmin\Controller\ComponentController'    => __DIR__ . '/src/OspariAdmin/Controller/ComponentController.php',
+    
     'OspariAdmin\Mailer'                       => __DIR__ . '/src/OspariAdmin/etc/Mailer.php',
     'OspariAdmin\Helper\AlertHelper'           => __DIR__ . '/src/OspariAdmin/Helper/AlertHelper.php',
     'OspariAdmin\Model\Draft'                  => __DIR__ . '/src/OspariAdmin/Model/Draft.php',
@@ -22,5 +24,6 @@ return array(
     'OspariAdmin\Model\Tag'                    => __DIR__ . '/src/OspariAdmin/Model/Tag.php',
     'OspariAdmin\Model\Tag2Draft'              => __DIR__ . '/src/OspariAdmin/Model/Tag2Draft.php',
     'OspariAdmin\Model\User'                   => __DIR__ . '/src/OspariAdmin/Model/User.php',
+     'OspariAdmin\Model\Component'                   => __DIR__ . '/src/OspariAdmin/Model/Component.php',
     'OspariAdmin\Service\SwiftMailer'          => __DIR__ . '/src/OspariAdmin/Service/SwiftMailer.php',
 );

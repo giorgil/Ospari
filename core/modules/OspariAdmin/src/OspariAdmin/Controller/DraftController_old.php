@@ -11,22 +11,17 @@ namespace OspariAdmin\Controller;
 
 use NZ\HttpRequest;
 use NZ\HttpResponse;
-use OspariAdmin\Model;
 use OspariAdmin\Model\Tag;
 use OspariAdmin\Model\PostMeta;
 
 class DraftController extends BaseController {
 
     public function editAction(HttpRequest $req, HttpResponse $res) {
-        
-        $draft = new Model\Draft( $req->getInt('draft_id') );
-        $res->setViewVar('draft', $draft);
-        
-        $res->buildBody('draft/edit.php');
-        
-        
+         return $this->createAction($req, $res);
     }
     public function renderEditorAction( HttpRequest $req, HttpResponse $res ){
+        
+        
         
         $res->buildBody('draft/editor.php');
     }
@@ -67,18 +62,43 @@ class DraftController extends BaseController {
         $view = $res->getView();
         $user = $this->getUser();
         $form = $this->createForm($view, $req);
+        $jsonView = new \NZ\JsonView($view);
 
         if ($req->isPOST()) {
             try {
                 $draft = $this->createOrEdit($form, $req, $user);
+
+                $jsonView->set('draft_id', $draft->id);
+                $jsonView->set('draft_url', $draft->getUrl());
+                if ($draft->isPublished()) {
+                    $jsonView->setSuccessMessage('Awsome! Your post has been published');
+                     $jsonView->set('post_url', $draft->getUrl());
+                    $jsonView->set('published', 1);
+                }else{
+                    $jsonView->setSuccessMessage('Your post has been saved as draft.');
+                }
+                
+                return $res->sendJson($jsonView->render());
                 
             } catch (\Exception $exc) {
-                $res->setViewVar('Exception', $exc);
+                return $res->sendErrorMessageJSON($exc->__toString());
+                //$res->setViewVar('Exception', $exc);
             }
         }
         
-        $res->setViewVar('form', $form);
+        if( $draft_id = $req->getInt('draft_id') ){
+            $draft = new \OspariAdmin\Model\Draft( $draft_id );
+            $req = $draft->toHttpRequest($req);
+            $req->set('tags', Tag::getTagsAsString($draft_id));
+            $form = $this->createForm($view, $req);
+        }
+        
+        
 
+        $res->setViewVar('uploadURL', OSPARI_URL.'/'.OSPARI_ADMIN_PATH.'/media/upload');
+        $res->setViewVar('req', $req);
+        $res->setViewVar('form', $form);
+        $res->setViewVar('metaForm', $this->createMetaForm($req, $view));
         $res->buildBody('draft/create.php');
     }
     
@@ -146,6 +166,34 @@ class DraftController extends BaseController {
         return $res->sendSuccessMessageJSON('ok');
     }
 
+    public function autoSaveAction(HttpRequest $req, HttpResponse $res) {
+        $view = $res->getView();
+        $user = $this->getUser();
+        $form = $this->createForm($view, $req);
+
+        $jsonView = new \NZ\JsonView($view);
+
+        if ($req->isPOST()) {
+            try {
+                $draft = $this->createOrEdit($form, $req, $user);
+
+                $jsonView->setSuccessMessage('Auto saved on.' . $draft->edited_at . '.');
+                $jsonView->set('draft_id', $draft->id);
+                $jsonView->set('draft_slug', $draft->slug);
+                $jsonView->set('draft_url', $draft->getUrl());
+
+                return $res->sendJson($jsonView->render());
+            } catch (\Exception $exc) {
+                return $res->sendErrorMessageJSON($exc->__toString());
+
+                return $res->sendErrorMessageJSON($exc->getMessage());
+            }
+        } else {
+            $res->sendErrorMessageJSON('Post method required');
+        }
+    }
+
+
     private function createOrEdit(\NZ\BootstrapForm $form, $req, $user) {
 
 
@@ -172,7 +220,8 @@ class DraftController extends BaseController {
         $model->title = $req->title;
         $model->user_id = $user->id;
         $model->content = $req->content;
-        
+        $model->code = $req->code;
+        //$model->tags = $req->tags;
         $model->setDateTime('edited_at', new \DateTime());
         $model->save();
 
@@ -181,7 +230,7 @@ class DraftController extends BaseController {
             $post = \OspariAdmin\Model\Post::findOne( array('draft_id' => $model->id ) );
             $modelArray = $model->toArray();
             unset($modelArray['id']);
-         
+            unset($modelArray['code']);
             if( !$post ){
                 $post = new \OspariAdmin\Model\Post();
                 $post->draft_id = $model->id;
@@ -255,22 +304,23 @@ class DraftController extends BaseController {
                 ->setAttribute('placeholder', 'title')
                 ->setRequired();
         
-        $form->createElement('content')
+        $form->createElement('code')
                 ->toTexArea()
                 ->setAttribute('rows', 10)
                 ->setAttribute('autofocus', 'autofocus')
-                ->setLabelText('Excerpt (Executive summary)')
+                ->setHelpText('Type "![]()" to upload photos.')
                 ->setAttribute('id', 'draft-content-textarea');
 
-        /* 
+         
+         $form->createElement('cover')
+                ->setAttribute('placeholder', 'Cover Image') ;
+                
+        
         $form->createElement('tags')
                 ->setAttribute('autocomplete', 'off')
                 ->setAttribute('placeholder', 'Type something and hit enter')
                 ->setAttribute('id', 'tag-input')
                 ->setRequired();
-         * 
-         */
-        
         $form->createHiddenElement('state', 'draft', 'post-state-input');
         return $form;
     }
