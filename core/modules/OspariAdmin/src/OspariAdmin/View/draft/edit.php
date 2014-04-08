@@ -11,6 +11,7 @@ $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap3-wysihtml5.min.css');
 $title = 'Edit';
 $this->title = $title;
 $draft = $this->draft;
+$cmpTypes = $this->cmpTypes;
 
 ?>
 <div class="col-lg-6 col-lg-offset-1" id="content-preview">
@@ -22,20 +23,38 @@ $draft = $this->draft;
             <h1><?php echo $this->escape($draft->title); ?></h1>
             
             <div>
-                <?php echo $this->escape($draft->content); ?>
+                <?php echo $draft->content; ?>
             </div>
             <div id="draft-components">
-                
+                <?php if($this->components->count()>0):?>
+                        <?php  foreach($this->components as $cmp):?>
+               
+                            <?php if($cmp->name=='text' || $cmp->name=='html'):?>
+                            <div id="draft-component-<?=$cmp->id?>">
+                                <?=$cmp->comment?>
+                            </div>
+                            <?php elseif($cmp->name=='image'):?>
+                                <div id="draft-component-<?=$cmp->id?>">
+                                    
+                                    <img src="<?php echo OSPARI_URL.'/content/upload/'.$cmp->code;?>" >
+                                </div>
+                             <?php else: ?>
+                                <p><?=$cmp->comment?></p>
+                                <div><?=$cmp->code?></div>
+                            <?php endif;?>
+                        <?php endforeach;?>
+                    <?php endif;?>
             </div>
                 
-                <div id="draft-component-0">
+            <div id="draft-component-0" class="op-component-min-height">
                     
                 </div>
                 <hr>
                 
                 <div id="component-btns">
-                    <a href="#" class="btn btn-default" data-component-type="text">Text</a>
-                    <a href="#" class="btn btn-default" data-component-type="YotubeVideo">Youtube</a>
+                    <?php foreach ($cmpTypes as $type): ?>
+                        <a href="#" class="btn btn-default" data-component-type="<?=$type['name']?>"><?=$type['short_name']?></a>
+                    <?php endforeach;?>
                 </div>
                 
                 
@@ -47,16 +66,20 @@ $draft = $this->draft;
 
 
 <script id="component-all-types-tpl-response" type="text/x-handlebars-template">
-    <div id="draf-component-{{id}}">
+    <div id="draft-component-{{id}}">
     <p>{{comment}}</p>
     <div>{{code}}</div>
     </div>
 </script>
 
 <script id="component-text-tpl-response" type="text/x-handlebars-template">
-    <div id="draf-component-{{id}}">
-    <p>{{comment}}</p>
-    <div>{{code}}</div>
+    <div id="draft-component-{{id}}">
+      {{comment}}
+    </div>
+</script>
+<script id="component-img-tpl-response" type="text/x-handlebars-template">
+    <div id="draft-component-{{id}}">
+      <img src="{{src}}" alt="{{alt}}">
     </div>
 </script>
     
@@ -64,12 +87,17 @@ $draft = $this->draft;
 <script id="component-text-tpl" type="text/x-handlebars-template">
 <form role="form" action="{{form-action}}" method="post">
   <div class="form-group">
-    <label for="comment">Comment</label>
-   <textarea name="comment" id="component-comment" class="form-control" rows="3"></textarea>
+    <label for="comment">{{label-text}}</label>
+   <textarea name="comment" id="component-comment" class="form-control op-component-text-box" rows="3"></textarea>
   </div>
-  <input type="hidden" name="component-type" value="{{component-type}}">
+  <input type="hidden" name="type_id" value="{{type-id}}">
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+</script>
+
+<script id="component-image-tpl" type="text/x-handlebars-template">
+    <label for="embed_code">{{label-text}}</label>
+    <div style="clear:both;" id="clear-dropzone"></div><div class="dropzone" id="dropzone"></div>
 </script>
 
 
@@ -78,14 +106,14 @@ $draft = $this->draft;
 <form role="form" action="{{form-action}}" method="post">
   <div class="form-group">
     <label for="comment">Comment</label>
-   <textarea name="comment" id="component-comment" class="form-control" rows="3"></textarea>
+   <textarea name="comment" id="component-comment" class="form-control op-component-comment-box" rows="3"></textarea>
   </div>
   <div class="form-group">
-    <label for="embed_code">Embed code</label>
-     <textarea name="code" id="component-code" class="form-control" rows="3"></textarea>
+    <label for="embed_code">{{label-text}}</label>
+     <textarea name="code" id="component-code" class="form-control op-component-code-box" rows="3"></textarea>
   </div>
   
-  <input type="hidden" name="component-type" value="{{component-type}}">
+  <input type="hidden" name="type_id" value="{{type-id}}">
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
@@ -94,29 +122,29 @@ $draft = $this->draft;
 <script>
     genericEditor = {
         addURL : '/<?php echo OSPARI_ADMIN_PATH.'/draft/'.$draft->id.'/add-component'; ?>',
-         editURL : '/<?php echo OSPARI_ADMIN_PATH.'/draft/'.$draft->id.'/edit-component'; ?>',
+        editURL : '/<?php echo OSPARI_ADMIN_PATH.'/draft/'.$draft->id.'/edit-component'; ?>',
+        uploadURL:'/<?php echo OSPARI_ADMIN_PATH.'/media/upload?draft_id='.$draft->id; ?>',
         init: function(){
-            /*
-             genericEditor.initWysihtml5();
-             genericEditor.listeners(); 
-             genericEditor.initDz();
-             */
             $('#component-btns a').on('click', genericEditor.addComponent);
+            $('#component-btns a[data-component-type="text"]').trigger('click');
              
         },
         
         submitComponentFrom: function(f){
-            url = $(this).attr('action');
-            
-            cb = function( res ){
-                
-                h = $('#component-text-tpl-response').html();
-                h = h.replace('{{id}}', res.id);
-                h = h.replace('{{comment}}', res.comment);
-                h = h.replace('{{code}}', res.code);
+            var url = $(this).attr('action');
+            var cb = function( res ){
+                if(!res.success){
+                bootbox.alert(res.message);
+                    return;
+                }
+                var data = res.data;    
+                var h = $('#'+genericEditor.currentCmpSetting.res_tpl_name).html();
+                h = h.replace('{{id}}', data.id);
+                h = h.replace('{{comment}}', data.comment);
+                h = h.replace('{{code}}', data.code);
                 $('#draft-components').append(h);
                 $('#draft-component-0').html('');
-            }
+            };
             
             $.post(url, $(this).serialize(), cb);
             
@@ -127,40 +155,37 @@ $draft = $this->draft;
            
             var type = $(this).attr('data-component-type');
             
-            setting = genericEditor.getComponentSettings(type);
+            var setting = genericEditor.getComponentSettings(type);
             if( !setting ){
                 alert('Invalid Click');
                 return;
             }
             
-            tpl = genericEditor.prepareTPL(setting);
+            var tpl = genericEditor.prepareTPL(setting);
             tpl = tpl.replace('{{form-action}}', genericEditor.addURL);
             $('#draft-component-0').html(tpl).fadeIn();
-            $('#draft-component-0 form').on('submit', genericEditor.submitComponentFrom)
-            //
+            if(setting.name ==='image'){
+                genericEditor.initDz();
+            }else{
+               if(setting.name!=='html'){
+                genericEditor.initWysihtml5();
+               }
+            }
+            $('#draft-component-0 form').on('submit', genericEditor.submitComponentFrom);
+           
             return false;
         },
         
         prepareTPL : function( setting ){
-            tpl = $('#'+setting.tpl).html();
-            tpl = tpl.replace('{{component-type}}', setting.type);
-            
+            var tpl = $('#'+setting.tpl_name).html();
+            tpl = tpl.replace('{{type-id}}', setting.id);
+            tpl = tpl.replace('{{label-text}}', setting.label);
             return tpl;
         },
         getComponentSettings : function( type ){
-            settings = {
-                'text' : {
-                    'tpl': 'component-text-tpl', 
-                    'type' : 'text',
-                },
-                
-                'YotubeVideo' : {
-                    'tpl': 'component-all-types-tpl', 
-                    'type' : 'YotubeVideo',
-                }
-            }
-            
+        var settings = <?php echo json_encode($cmpTypes);?>;
             if( settings[type] ){
+                genericEditor.currentCmpSetting = settings[type];
                 return settings[type];
             }
             return null;
@@ -169,16 +194,15 @@ $draft = $this->draft;
         },
         
         initWysihtml5: function(){
-            return;
-             $('.textarea').wysihtml5({
+             $('textarea[name="comment"]').wysihtml5({
                  image:false
              });
-             genericEditor.wysihtml5 =$('.textarea').data("wysihtml5").editor;
+             genericEditor.wysihtml5 =$('textarea[name="comment"]').data("wysihtml5").editor;
         },
         initDz: function(){
             $("div#dropzone").dropzone(
                  { 
-                     url:"/media/upload?draft_id="+$('#draft-id-input').val(),
+                     url:genericEditor.uploadURL+'&type_id='+genericEditor.currentCmpSetting.id,
                      parallelUploads:1,
                      maxFilesize:1,
                      paramName:'image',
@@ -195,6 +219,15 @@ $draft = $this->draft;
 
                          this.on("success", function(file, json, xmlHttp) { 
                              if(json.success){
+                                var data = json.cmp,
+                                     src = json.message;    
+                                var h = $('#'+genericEditor.currentCmpSetting.res_tpl_name).html();
+                                h = h.replace('{{id}}', data.id);
+                                h = h.replace('{{src}}', src);
+                                h = h.replace('{{alt}}', 'Photo');
+                                $('#draft-component-'+data.id).remove();
+                                $('#draft-components').append(h);
+                                $('#draft-component-0').html('');
                              }else{
                                  this.removeFile(file);
                                  bootbox.alert(json.message);
@@ -207,9 +240,7 @@ $draft = $this->draft;
                      }
                  }
               );
-        },
-      
-     
+        }
       
     };
   $(function(){

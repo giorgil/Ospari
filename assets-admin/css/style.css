@@ -81,3 +81,19 @@ cursor: pointer;
    padding: 3px;
    width: 270px;
 }
+
+/*
+Generic Editor Style
+*/
+.op-component-min-height{
+    min-height: 385px !important;
+}
+.op-component-comment-box{
+    min-height: 200px !important;
+}
+.op-component-text-box{
+    min-height: 300px !important;
+}
+.op-component-code-box{
+    min-height: 150px !important;
+}

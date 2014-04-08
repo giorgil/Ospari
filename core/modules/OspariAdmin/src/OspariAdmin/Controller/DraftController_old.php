@@ -14,7 +14,7 @@ use NZ\HttpResponse;
 use OspariAdmin\Model\Tag;
 use OspariAdmin\Model\PostMeta;
 
-class DraftController extends BaseController {
+class DraftControllerOld extends BaseController {
 
     public function editAction(HttpRequest $req, HttpResponse $res) {
          return $this->createAction($req, $res);

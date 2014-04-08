@@ -31,6 +31,7 @@ class MediaController extends BaseController {
         if(!$draft){
             return $res->sendErrorMessageJSON('Draft could be found!');
         }
+        $json  = new \NZ\JsonView($res->getView());
         try {
             
             if ($req->hasUpload()) {
@@ -44,15 +45,31 @@ class MediaController extends BaseController {
                  $draft->thumb = $media->thumb;
                  $draft->media_id = $media->id;
                  $draft->save();
+                 $cmp = new \OspariAdmin\Model\Component(array('code'=>$media->large,'draft_id'=>$draft->id));
+                 if(!$cmp->id){
+                        $cmp->code = $media->large;
+                        $cmp->user_id = $this->getUser()->id;
+                        $cmp->draft_id = $draft->id;
+                        $cmp->type_id = $req->getInt('type_id');
+                        $cmp->setCreatedAt();
+                        $counter = new \OspariAdmin\Model\Component();
+                        $count = $counter->count(array('draft_id'=>$draft->id));
+                        $cmp->order_nr = $count+1;
+                        $cmp->save();
+                 }
+                  $json->set('cmp',$cmp->toArray());
+                  $json->set('success', true);
+                  $json->set('message', OSPARI_URL.'/content/upload'.$media->large);
+                  $json->set('img_id', $media->id);
+                   return $res->sendJson($json->render());
            }
+            else {
+                return $res->sendErrorMessageJSON('No Upload found');
+            }
         } catch (\Exception $exc) {
             return $res->sendErrorMessageJSON($exc->getMessage());
         }
-        $json  = new \NZ\JsonView($res->getView());
-        $json->set('success', true);
-        $json->set('message', OSPARI_URL.'/content/upload'.$media->large);
-        $json->set('img_id', $media->id);
-        return $res->sendJson($json->render());
+
     }
     
     private function handleUpload(HttpRequest $req){

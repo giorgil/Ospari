@@ -14,6 +14,8 @@ use NZ\HttpResponse;
 use OspariAdmin\Model;
 use OspariAdmin\Model\Tag;
 use OspariAdmin\Model\PostMeta;
+use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
 
 class DraftController extends BaseController {
 
@@ -21,16 +23,25 @@ class DraftController extends BaseController {
         
         $draft = new Model\Draft( $req->getInt('draft_id') );
         $res->setViewVar('draft', $draft);
+        $res->setViewVar('cmpTypes', $this->buildCmpTypes());
         
+        $sql = new Select(OSPARI_DB_PREFIX.'components');
+        $sql->join(
+                    OSPARI_DB_PREFIX.'component_types', 
+                    OSPARI_DB_PREFIX.'components.type_id='.OSPARI_DB_PREFIX.'component_types.id', 
+                    array('name','short_name','label','tpl_name'),
+                    Select::JOIN_INNER
+                );
+        $where = new Where();
+        $where->equalTo(OSPARI_DB_PREFIX.'components.draft_id',$draft->id);
+        
+        $sql->where($where);
+        $sql->order(array('order_nr'=>'ASC'));
+        $res->setViewVar('components', Model\Component::findAll($sql));
         $res->buildBody('draft/edit.php');
         
         
     }
-    public function renderEditorAction( HttpRequest $req, HttpResponse $res ){
-        
-        $res->buildBody('draft/editor.php');
-    }
-
     public function updateSlugAction( HttpRequest $req, HttpResponse $res ){
          $user = $this->getUser();
          if($req->isPOST()){
@@ -71,6 +82,9 @@ class DraftController extends BaseController {
         if ($req->isPOST()) {
             try {
                 $draft = $this->createOrEdit($form, $req, $user);
+                if($draft){
+                    $res->redirect('/'.OSPARI_ADMIN_PATH.'/draft/edit/'.$draft->id);
+                }
                 
             } catch (\Exception $exc) {
                 $res->setViewVar('Exception', $exc);
@@ -335,5 +349,13 @@ class DraftController extends BaseController {
             $req->set($meta->key_name, $meta->key_value);
         }
         return $req;
+    }
+    protected function buildCmpTypes(){
+        $types = Model\ComponentType::findAll(array());
+        $arr = array();
+        foreach ($types as $type){
+            $arr[$type->name]= $type->toArray();  
+        }
+        return $arr;
     }
 }
