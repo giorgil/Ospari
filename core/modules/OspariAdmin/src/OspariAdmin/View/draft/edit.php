@@ -34,15 +34,17 @@ $cmpTypes = $this->cmpTypes;
                     $componentID = $cmp->id;
                     ?>
                     <div data-component-type="<?php echo $componentType->name; ?>" class="draft-component component-<?php echo $componentType->name; ?>" id="draft-component-<?php echo $componentID ?>">
-                        <div class="component-comment" id="draft-component-comment-<?php echo $componentID ?>"><?= $cmp->comment ?></div>
-                        <?php if ($componentType->name == 'image'): ?>
+                        <div  id="draft-component-content-<?php echo $componentID ?>">
+                            <div class="component-comment" id="draft-component-comment-<?php echo $componentID ?>"><?= $cmp->comment ?></div>
+                            <?php if ($componentType->name == 'image'): ?>
 
-                            <div id="draft-component-image-<?php echo $componentID ?>">
-                                <img src="<?php echo OSPARI_URL . '/content/upload/' . $cmp->code; ?>" >
-                            </div>
-                        <?php else: ?>
-                            <div class="component-code" id="draft-component-code-<?php echo $componentID ?>"><?= $cmp->code ?></div>
-                        <?php endif; ?>
+                                <div id="draft-component-image-<?php echo $componentID ?>">
+                                    <img src="<?php echo OSPARI_URL . '/content/upload/' . $cmp->code; ?>" >
+                                </div>
+                            <?php else: ?>
+                                <div class="component-code" id="draft-component-code-<?php echo $componentID ?>"><?= $cmp->code ?></div>
+                            <?php endif; ?>
+                        </div>
 
                         <div class="draft-components-handle">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"  title="Config"><i class="fa fa-cog"></i></a>
@@ -163,39 +165,34 @@ $cmpTypes = $this->cmpTypes;
 
                 return false;
             },
-            
             editClick: function() {
                 var componentID = $(this).attr('data-component-id');
                 return genericEditor.editComponent(componentID);
-            },    
-    
+        },
             editComponent: function(componentID) {
-                
-                var cmp = $('#draft-component-'+componentID);
-               
-                
-                 var type = $(cmp).attr('data-component-type');
-                 
+
+                var cmp = $('#draft-component-' + componentID);
+
+
+                var type = $(cmp).attr('data-component-type');
+
 
                 var setting = genericEditor.getComponentSettings(type);
                 if (!setting) {
                     alert('Invalid Click');
                     return;
                 }
-                
+
                 var tpl = genericEditor.prepareTPL(setting);
                 tpl = tpl.replace('{{form-action}}', genericEditor.editURL);
-                tpl = tpl.replace('{{comment-val}}',  $('#draft-component-comment-'+componentID).html() ) ;
-               tpl = tpl.replace('{{code-val}}',  $('#draft-component-code-'+componentID).html() );
+                tpl = tpl.replace('{{comment-val}}', $('#draft-component-comment-' + componentID).html());
+                tpl = tpl.replace('{{code-val}}', $('#draft-component-code-' + componentID).html());
                 //$(cmp).html(tpl);
                 bootbox.alert(tpl);
                 //var container = document.getElementById('draft-component-'+componentID);
                 //back = flippant.flip(container, tpl, 'card');
                 //back.close();
-                return false;
-                
-            },   
-            
+                return false;           },
             addComponent: function() {
 
                 var type = $(this).attr('data-component-type');
