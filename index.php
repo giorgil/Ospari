@@ -9,6 +9,7 @@ define('NZ_SESSION_TABLE', OSPARI_DB_PREFIX.'sessions');
 define('NZ_MODULE_PATH', __DIR__ . '/core/modules');
 define('NZ2_PATH', __DIR__ . '/core/vendor/28h/nz-core');
 define('Z2_PATH', __DIR__ . '/core/vendor/Zend');
+define('VENDOR_PATH', __DIR__ . '/core/vendor');
 require  __DIR__ . '/core/vendor/autoload.php';
 
 //require_once NZ2_PATH . '/app/ClassLoader.php';
@@ -17,7 +18,8 @@ $loader = \NZ\ClassLoader::getInstance();
 //$loader->registerAutoloadMap(NZ2_PATH . '/autoload_classmap.php');
 $loader->registerAutoloadMap(Z2_PATH . '/autoload_classmap.php');
 $loader->register();
-
+require_once VENDOR_PATH.'/htmlpurifier/library/HTMLPurifier/Bootstrap.php';
+spl_autoload_register(array('HTMLPurifier_Bootstrap', 'autoload'));
 //require __DIR__ . '/core/vendor/xamin/handlebars/Autoloader.php';
 
 //Handlebars\Autoloader::register();
