@@ -36,7 +36,7 @@ class ComponentController extends BaseController {
             $component->save();
             $obj = new \stdClass();
             $obj->success=true;
-            $obj->data= $component->toArray();
+            $obj->data = $component->toArray();
             return $res->sendJson( json_encode($obj) );
         } catch (\Exception $exc) {
             return $res->sendErrorMessageJSON($exc->getMessage());

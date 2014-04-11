@@ -25,6 +25,7 @@ class DraftController extends BaseController {
         $res->setViewVar('draft', $draft);
         $res->setViewVar('cmpTypes', $this->buildCmpTypes());
         
+        /*
         $sql = new Select(OSPARI_DB_PREFIX.'components');
         $sql->join(
                     OSPARI_DB_PREFIX.'component_types', 
@@ -37,7 +38,14 @@ class DraftController extends BaseController {
         
         $sql->where($where);
         $sql->order(array('order_nr'=>'ASC'));
+        
+        
         $res->setViewVar('components', Model\Component::findAll($sql));
+         * 
+         */
+        $map = new \NZ\Map();
+        $componentPager = Model\Component::getPager($map, $req);
+         $res->setViewVar('components', $componentPager->getItems() );
         $res->buildBody('draft/edit.php');
         
         

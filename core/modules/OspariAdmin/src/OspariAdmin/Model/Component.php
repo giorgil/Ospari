@@ -4,17 +4,68 @@ namespace OspariAdmin\Model;
 use NZ\HttpRequest;
 use NZ\HttpResponse;
 Class Component extends \NZ\ActiveRecord {
-     public function getTableName() {
+    
+    protected static $types = array();
+    protected static $typesLoaded = FALSE;
+    protected static $defaultType = NULL;
+
+
+    public function getTableName() {
        return OSPARI_DB_PREFIX.'components';
     }
     
+    
+    static public function getPager($map, $req, $perPage = 100) {
+        $where = new \Zend\Db\Sql\Where();
+        /*
+        if( $map->draft_id ){
+            $where->equalTo('draft_id', $map->draft_id);
+        }
+         * 
+         */
+        $where->equalTo('draft_id', $req->getInt('draft_id'));
+        
+        return new \NZ\Pager(new Component(), $where, $req->getInt('page'), $perPage, $order = 'id DESC');
+    }
+    
+    public function getType(){
+        return self::fetchType($this->type_id);
+    }
+
+    
+
+    static protected function fetchType( $type_id ){
+        $types = self::$types; 
+       if( !self::$typesLoaded ){
+          
+           foreach( ComponentType::findAll(array()) as $type ){
+               $types[$type->id] = $type;
+               if( $type->isDefault() ){
+                   self::$defaultType = $type;
+               }
+           }
+          self::$types = $types;
+           self::$typesLoaded = TRUE;
+       } 
+       
+       if( isset( $types[$type_id ] ) ){
+           return $types[$type_id ];
+       }
+       return  self::$defaultType;
+       
+    }
+
+    
+
+
+
     /**
      * 
      * @param type $req
      * @return \stdClass
      */
     public function validate(HttpRequest $req, $model){
-        if(!$comment =$req->comment ){
+        if(!$comment = $req->comment ){
             throw new \Exception('Comment required');
         }
         $model->comment = $comment;

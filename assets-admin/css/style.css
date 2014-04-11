@@ -97,3 +97,21 @@ Generic Editor Style
 .op-component-code-box{
     min-height: 150px !important;
 }
+
+/** components */
+.draft-component{
+    position: relative;
+    border-right: 1px dotted #ccc;
+    margin-bottom: 10px;
+}
+
+.component-code iframe{
+    margin: 0 auto !important;
+    display: block;
+}
+
+.draft-components-handle{
+     position: absolute;
+     top: 8px;
+     right: -30px;
+}    
