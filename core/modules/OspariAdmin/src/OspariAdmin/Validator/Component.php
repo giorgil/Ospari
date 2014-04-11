@@ -8,10 +8,11 @@ namespace OspariAdmin\Validator;
  */
 use NZ\HttpRequest;
 use HTMLPurifier;
+use NZ\Map;
 class Component {
-    public function validate(HttpRequest $req, $type= NULL ){
+    public function validate(Map $map,HttpRequest $req, $type= NULL ){
         if($type=='text'){
-            return $this->validateText($req);
+            return $this->validateText($map, $req);
         }
         
         if($type == 'html'){
@@ -20,18 +21,19 @@ class Component {
         return $this->ValidateAll($req);
     }
     
-    protected function validateText(HttpRequest$req){
-        if(!$comment = $req->get('comment')){
-            throw new \Exception('Comment required');
+    protected function validateText(Map $map, HttpRequest $req){
+        $attr = $map->get('attr')?$map->get('attr'):'comment'; 
+        if(!$comment = $req->get($attr)){
+            throw new \Exception($attr.' required');
         }
         $obj = new \stdClass();
         $purifier = new HTMLPurifier();
-        $obj->comment = $purifier->purify($comment);
+        $obj->{$attr} = $purifier->purify($comment);
         
         return $obj;
         
     }
-    protected function validateHtml(HttpRequest$req){
+    protected function validateHtml(HttpRequest $req){
         if(!$code = $req->get('code')){
             throw new \Exception('Code required');
         }

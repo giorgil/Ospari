@@ -5,7 +5,7 @@ namespace OspariAdmin\Controller;
 use NZ\HttpRequest;
 use NZ\HttpResponse;
 
-class MediaController extends BaseController {
+class MediaControllerOld extends BaseController {
 
     public function uploadAction(HttpRequest $req, HttpResponse $res) {
 

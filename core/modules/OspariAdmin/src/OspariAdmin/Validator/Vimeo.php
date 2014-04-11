@@ -9,7 +9,7 @@ namespace OspariAdmin\Validator;
  */
 use NZ\HttpRequest;
 class Vimeo extends Component{
-    public function validate(HttpRequest $req) {
-        return parent::validate($req);
+    public function validate(\NZ\Map $map, HttpRequest $req,$type=NULL) {
+        return parent::validate($map, $req, 'vimeo_video');
     }
 }

@@ -101,7 +101,7 @@ function try_delete(id,adminPath) {
       
       return false;
   }
- /**************************************************************/   
+ /**************************************************************   
 
 Ospari = {
     doAutoSave: 0,
@@ -381,6 +381,174 @@ Ospari = {
         
     }
 
-};
+};*/
+
+/********************************************************************************************
+ * Generic Editor
+ */
+
+genericEditor = {
+           /* addURL: addURL,
+            editURL: editURL,
+            uploadURL: uploadURL,*/
+            init: function() {
+                $('#component-btns a').on('click', genericEditor.addComponent);
+                //$('#component-btns a[data-component-type="text"]').trigger('click');
+                //$('.draft-components-handle-edit').on('click', genericEditor.editClick);
+
+            },
+            submitComponentFrom: function(f) {
+                var url = $(this).attr('action');
+                var cb = function(res) {
+                    if (!res.success) {
+                        bootbox.alert(res.message);
+                        return;
+                    }
+                    var data = res.data;
+                    /*var h = $('#' + genericEditor.currentCmpSetting.res_tpl_name).html();
+                    h = h.replace('{{id}}', data.id);
+                    h = h.replace('{{comment}}', data.comment);
+                    h = h.replace('{{code}}', data.code);*/
+                    $('#draft-components').append(res.html);
+                    $('#draft-component-0').html('').removeClass('op-component-min-height');
+                };
+
+                $.post(url, $(this).serialize(), cb);
+
+                return false;
+            },
+            submitChanges: function(f){
+                var url = $(f).attr('action');
+                var cb = function(res) {
+                    if (!res.success) {
+                        bootbox.alert(res.message);
+                        return;
+                    }
+                    $('#draft-component-'+res.data.id).html(res.html);
+                };
+                $.post(url, $(f).serialize(), cb);
+                return false;
+                
+            },
+            editClick: function(el) {
+                var componentID = $(el).attr('data-component-id');
+                $('#draft-component-0').html('').removeClass('op-component-min-height');
+                return genericEditor.editComponent(componentID);
+           },
+            editComponent: function(componentID) {
+
+                var cmp = $('#draft-component-' + componentID);
+                var type = $(cmp).attr('data-component-type');
+                var setting = genericEditor.getComponentSettings(type);
+                if (!setting) {
+                    alert('Invalid Click');
+                    return;
+                }
+
+                var tpl = genericEditor.prepareTPL(setting);
+                tpl = tpl.replace('{{form-action}}', genericEditor.editURL);
+                tpl = tpl.replace('{{component-id}}', componentID);
+                tpl = tpl.replace('{{comment-val}}', $('#draft-component-comment-' + componentID).html());
+                tpl = tpl.replace('{{code-val}}', $('#draft-component-code-' + componentID).html());
+                tpl = tpl.replace('{{onsubmit}}', ' onsubmit =" return genericEditor.submitChanges(this);"');
+                bootbox.dialog({message:tpl,title:'Edit',buttons:{}});
+                genericEditor.initWysihtml5();
+                return false;           
+            },
+            addComponent: function() {
+
+                var type = $(this).attr('data-component-type');
+
+                var setting = genericEditor.getComponentSettings(type);
+                if (!setting) {
+                    alert('Invalid Click');
+                    return;
+                }
+
+                var tpl = genericEditor.prepareTPL(setting);
+                tpl = tpl.replace('{{code-val}}', '');
+                tpl = tpl.replace('{{onsubmit}}', '');
+                tpl = tpl.replace('{{comment-val}}', '');
+                tpl = tpl.replace('{{form-action}}', genericEditor.addURL);
+                $('#draft-component-0').html(tpl).fadeIn();
+                if(!$('#draft-component-0').hasClass('op-component-min-height')){
+                    $('#draft-component-0').addClass('op-component-min-height');
+                }
+                if (setting.name === 'image') {
+                    genericEditor.initDz();
+                } 
+                genericEditor.initWysihtml5();
+                $('#draft-component-0 form').on('submit', genericEditor.submitComponentFrom);
+
+                return false;
+            },
+            prepareTPL: function(setting) {
+                var tpl = $('#' + setting.tpl_name).html();
+                tpl = tpl.replace('{{type-id}}', setting.id);
+                tpl = tpl.replace('{{label-text}}', setting.label);
+                return tpl;
+            },
+            getComponentSettings: function(type) {
+                var settings = genericEditor.cmpTypes;
+                if (settings[type]) {
+                    genericEditor.currentCmpSetting = settings[type];
+                    return settings[type];
+                }
+                return null;
 
 
+            },
+            initWysihtml5: function() {
+                $('textarea[name="comment"]').wysihtml5({
+                    image: false
+                });
+                genericEditor.wysihtml5 = $('textarea[name="comment"]').data("wysihtml5").editor;
+            },
+            initDz: function() {
+                $("div#dropzone").dropzone(
+                        {
+                            url: genericEditor.uploadURL + '&type_id=' + genericEditor.currentCmpSetting.id,
+                            parallelUploads: 1,
+                            maxFilesize: 1,
+                            paramName: 'image',
+                            uploadMultiple: false,
+                            thumbnailWidth: 400,
+                            thumbnailHeight: 300,
+                            maxFiles: 1,
+                            addRemoveLinks: false,
+                            init: function() {
+                                this.on("error", function(file, message) {
+                                    this.removeFile(file);
+                                    bootbox.alert(message);
+                                });
+
+                                this.on("success", function(file, json, xmlHttp) {
+                                    if (json.success) {
+                                        var data = json.cmp,
+                                                src = json.message;
+                                        var h = $('#' + genericEditor.currentCmpSetting.res_tpl_name).html();
+                                        h = h.replace('{{id}}', data.id);
+                                        h = h.replace('{{src}}', src);
+                                        h = h.replace('{{alt}}', 'Photo');
+                                        h = h.replace('{{comment}}',data.comment? data.comment:'');
+                                        $('#draft-component-' + data.id).remove();
+                                        $('#draft-components').append(h);
+                                        $('#draft-component-0').html('').removeClass('op-component-min-height');
+                                    } else {
+                                        this.removeFile(file);
+                                        bootbox.alert(json.message);
+                                    }
+                                });
+
+                                this.on("maxfilesexceeded", function(file) {
+                                    this.removeFile(file);
+                                });
+                            }
+                        }
+                );
+            }
+
+        };
+        $(function() {
+            genericEditor.init();
+        });

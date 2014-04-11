@@ -59,7 +59,8 @@ class Module {
             '/'.OSPARI_ADMIN_PATH.'/update' => array( __NAMESPACE__.'\Controller\UpdateController',  'updateAction' ),
             
              '/'.OSPARI_ADMIN_PATH.'/editor' => array( __NAMESPACE__.'\Controller\DraftController',  'renderEditorAction' ),
-              '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/add-component' => array( __NAMESPACE__.'\Controller\ComponentController',  'addAction' ),
+             '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/add-component' => array( __NAMESPACE__.'\Controller\ComponentController',  'addAction' ),
+             '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/edit-component' => array( __NAMESPACE__.'\Controller\ComponentController',  'editAction' ),
             
             '/install' => array( __NAMESPACE__.'\Controller\InstallController',  'installAction' ),
             

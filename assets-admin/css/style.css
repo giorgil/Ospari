@@ -86,23 +86,26 @@ cursor: pointer;
 Generic Editor Style
 */
 .op-component-min-height{
-    min-height: 385px !important;
+    min-height: 160px !important;
 }
 .op-component-comment-box{
-    min-height: 200px !important;
+    min-height: 100px !important;
 }
 .op-component-text-box{
-    min-height: 300px !important;
+    min-height: 100px !important;
 }
 .op-component-code-box{
-    min-height: 150px !important;
+    min-height: 100px !important;
 }
-
+.dropzone{
+    min-height: 153px !important;
+}
 /** components */
 .draft-component{
     position: relative;
     border-right: 1px dotted #ccc;
     margin-bottom: 10px;
+    padding-right: 20px;
 }
 
 .component-code iframe{
@@ -113,5 +116,5 @@ Generic Editor Style
 .draft-components-handle{
      position: absolute;
      top: 8px;
-     right: 6px;
+     right:6px;
 }    

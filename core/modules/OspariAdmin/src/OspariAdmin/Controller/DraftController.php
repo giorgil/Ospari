@@ -16,6 +16,7 @@ use OspariAdmin\Model\Tag;
 use OspariAdmin\Model\PostMeta;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
+use OspariAdmin\Validator\Text;
 
 class DraftController extends BaseController {
 
@@ -193,7 +194,9 @@ class DraftController extends BaseController {
         //$model = $form->saveToModel($model);
         $model->title = $req->title;
         $model->user_id = $user->id;
-        $model->content = $req->content;
+        $validator = new Text();
+        $obj = $validator->validate(new \NZ\Map(array('attr'=>'content')),$req);
+        $model->content = $obj->content;
         
         $model->setDateTime('edited_at', new \DateTime());
         $model->save();

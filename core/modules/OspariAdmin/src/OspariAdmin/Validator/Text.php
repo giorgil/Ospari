@@ -8,7 +8,7 @@ namespace OspariAdmin\Validator;
  */
 use NZ\HttpRequest;
 class Text extends Component{
-    public function validate(HttpRequest $req ) {
-        return parent::validate($req,'text');
+    public function validate(\NZ\Map $map, HttpRequest $req ,$type=NULL) {
+        return parent::validate($map, $req,'text');
     }
 }
