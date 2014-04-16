@@ -62,6 +62,9 @@ class Module {
              '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/add-component' => array( __NAMESPACE__.'\Controller\ComponentController',  'addAction' ),
              '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/edit-component' => array( __NAMESPACE__.'\Controller\ComponentController',  'editAction' ),
             
+            '/'.OSPARI_ADMIN_PATH.'/component-{component_id}.json' => array( __NAMESPACE__.'\Controller\ComponentController',  'getJSONAction' ),
+             '/'.OSPARI_ADMIN_PATH.'/component/embed/{component_id}' => array( __NAMESPACE__.'\Controller\ComponentController',  'embedAction' ),
+            
             '/install' => array( __NAMESPACE__.'\Controller\InstallController',  'installAction' ),
             
             

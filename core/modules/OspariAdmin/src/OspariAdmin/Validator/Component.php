@@ -22,7 +22,7 @@ class Component {
     }
     
     protected function validateText(Map $map, HttpRequest $req){
-        $attr = $map->get('attr')?$map->get('attr'):'comment'; 
+        $attr = $map->get('attr')? $map->get('attr'):'comment'; 
         if(!$comment = $req->get($attr)){
             throw new \Exception($attr.' required');
         }

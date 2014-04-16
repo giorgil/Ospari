@@ -5,6 +5,13 @@ $this->setJS(OSPARI_URL . '/assets-admin/js/bootstrap-tagsinput.min.js');
 $this->setJS(OSPARI_URL . '/assets-admin/js/bootstrap3-wysihtml5.all.min.js');
 $this->setJS(OSPARI_URL . '/assets-admin/js/flippant.min.js');
 
+$this->setJS('//platform.twitter.com/widgets.js');
+$this->setJS('//connect.facebook.net/en_US/all.js#xfbml=1');
+$this->setJS('//apis.google.com/js/plusone.js');
+
+
+//connect.facebook.net/en_US/all.js#xfbml=1
+
 $this->setCSS(OSPARI_URL . '/assets-admin/css/dropzone.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap-tagsinput.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap3-wysihtml5.min.css');
@@ -16,6 +23,9 @@ $draft = $this->draft;
 $cmpTypes = $this->cmpTypes;
 ?>
 <div class="col-lg-6 col-lg-offset-1" id="content-preview">
+    
+    
+    
 
 </div>
 <div class="row">
@@ -29,7 +39,7 @@ $cmpTypes = $this->cmpTypes;
 
             <?php foreach ($this->components as $cmp): ?>
                 
-                <?php include __DIR__ . '/../tpl/draft_component_wrapper.php'; ?>
+                <?php include __DIR__ . '/../tpl/draft_component.php'; ?>
                 
                 <?php endforeach; ?>
 
@@ -92,14 +102,14 @@ $cmpTypes = $this->cmpTypes;
 
 
     <script id="component-all-types-tpl" type="text/x-handlebars-template">
-        <form role="form" action="{{form-action}}" method="post">
+        <form role="form" action="{{form-action}}"  {{onsubmit}} method="post">
         <div class="form-group">
         <label for="comment">Comment</label>
         <textarea name="comment" id="component-comment" class="form-control op-component-comment-box" rows="3">{{comment-val}}</textarea>
         </div>
         <div class="form-group">
         <label for="embed_code">{{label-text}}</label>
-        <textarea name="code" id="component-code" class="form-control op-component-code-box" rows="3">{{code-val}}</textarea>
+        <textarea name="code" id="component-code" required class="form-control op-component-code-box" rows="3">{{code-val}}</textarea>
         </div>
 
         <input type="hidden" name="type_id" value="{{type-id}}">
@@ -112,7 +122,7 @@ $cmpTypes = $this->cmpTypes;
     <script>
 
         $(document).ready( function(){
-
+            genericEditor.amdinPath = '/<?php echo OSPARI_ADMIN_PATH ?>';
         genericEditor.addURL= '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/add-component'; ?>';
         genericEditor.editURL= '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/edit-component'; ?>';
         genericEditor.uploadURL= '/<?php echo OSPARI_ADMIN_PATH . '/media/upload?draft_id=' . $draft->id; ?>';

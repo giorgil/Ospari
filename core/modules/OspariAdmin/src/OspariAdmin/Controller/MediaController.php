@@ -47,6 +47,10 @@ class MediaController extends BaseController {
                  $draft->save();
                  $cmp = new \OspariAdmin\Model\Component(array('code'=>$media->large,'draft_id'=>$draft->id));
                  if(!$cmp->id){
+                     
+                        $purifier = new \HTMLPurifier();
+                        $cmp->comment = $purifier->purify($req->get('comment'));
+                     
                         $cmp->code = $media->large;
                         $cmp->user_id = $this->getUser()->id;
                         $cmp->draft_id = $draft->id;

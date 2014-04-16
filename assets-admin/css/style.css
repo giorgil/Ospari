@@ -100,21 +100,50 @@ Generic Editor Style
 .dropzone{
     min-height: 153px !important;
 }
-/** components */
-.draft-component{
+/** components admin */
+#component-btns{
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 80px;
+}
+
+.component{
     position: relative;
     border-right: 1px dotted #ccc;
     margin-bottom: 10px;
     padding-right: 20px;
 }
 
+.component-handle{
+     position: absolute;
+     top: 8px;
+     right:6px;
+     display: none;
+}
+.component:hover .component-handle{
+    display: block;
+}
+
+/** components design */
+.component-code{
+    display: block;
+}
 .component-code iframe{
     margin: 0 auto !important;
     display: block;
 }
 
-.draft-components-handle{
-     position: absolute;
-     top: 8px;
-     right:6px;
-}    
+.component-image{
+    text-align: center;
+}
+
+.fb_iframe_widget{
+   text-align: center;
+   display: block !important;
+}
+
+
+.component-code-google_plus_post div{
+    display: block !important;
+    width: auto !important;
+}

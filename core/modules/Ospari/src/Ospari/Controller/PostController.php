@@ -68,7 +68,7 @@ class PostController extends BaseController {
 
         }
 
-        $res->setViewVar('post', $post->toStdObject());
+        $res->setViewVar('post', $post->toStdObject() );
 
         $helper = new \Ospari\Helper\Theme();
         $helper->prepare();

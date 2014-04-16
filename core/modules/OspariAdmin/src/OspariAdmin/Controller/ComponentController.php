@@ -36,11 +36,14 @@ class ComponentController extends BaseController {
 
             $map = new \NZ\Map(array('component'=> $component,'draft_id'=> $draft_id,'componentType'=>$cmpType));
             $component = $this->createOrEdit($map, $req, $res);
+          
             $obj = new \stdClass();
             $obj->success=true;
             $obj->data = $component->toArray();
             $res->setViewVar('component', $component);
-            $obj->html= $res->getViewContent('tpl/draft_cmp.php');
+            $res->setViewVar('use_iFrame', TRUE);
+            $obj->html = $this->renderCode($component, $res);
+           
             return $res->sendJson( json_encode($obj) );
         } catch (\Exception $exc) {
             return $res->sendErrorMessageJSON($exc->getMessage());
@@ -48,9 +51,51 @@ class ComponentController extends BaseController {
             
     }
     
+    protected function renderCode($component, $res, $mode = 'add'){
+         
+           
+            
+            if( $mode == 'edit' ){
+                return $res->getViewContent('tpl/draft_component_content.php');
+            }
+            
+            return $res->getViewContent('tpl/draft_cmp.php');
+            
+    }
+
+        public function embedAction( HttpRequest $req, HttpResponse $res ){
+         //exit('nnnnnn');
+         $cmp = new Model\Component( $req->getInt('component_id') );
+         if( !$cmp->id ){
+             return $res->buildBodyFromString('Compontent not found');
+         }
+         
+         
+         $tpl = __DIR__.'/../View/draft/embedComponent.php';
+         $view = $res->getView();
+         $view->component = $cmp;
+         $content = $view->getContent($tpl);
+         exit($content);
+         return $res->buildBodyFromString($content);
+     }
+    
+     public function getJSONAction( HttpRequest $req, HttpResponse $res ){
+         $cmp = new Model\Component( $req->getInt('component_id') );
+         if( !$cmp->id ){
+             return $res->sendErrorMessageJSON('Compontent not found');
+         }
+         
+         $obj = new \stdClass();
+         $obj->success = TRUE;
+         $obj->component = $cmp->toStdObject();
+         
+         return $res->sendJson( json_encode($obj) );
+         
+     }
+    
     public function editAction( HttpRequest $req, HttpResponse $res ){
         if(!$req->isAjax()){
-            return $res->sendErrorMessage('Bad Request');
+            return $res->sendErrorMessageJSON('Bad Request');
         }
         if(!$req->isPOST()){
             return $res->sendErrorMessageJSON('Bad Request method');
@@ -75,7 +120,9 @@ class ComponentController extends BaseController {
             $obj->success=true;
             $obj->data = $component->toArray();
             $res->setViewVar('component', $component);
-            $obj->html= $res->getViewContent('tpl/draft_component_wrapper.php');
+            $res->setViewVar('use_iFrame', TRUE);
+            //$obj->html= $res->getViewContent('tpl/draft_component_content.php');
+             $obj->html = $this->renderCode($component, $res, 'edit');
             return $res->sendJson( json_encode($obj) );
         } catch (\Exception $exc) {
             return $res->sendErrorMessageJSON($exc->getMessage());
