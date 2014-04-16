@@ -59,11 +59,11 @@ class ComponentController extends BaseController {
                 return $res->getViewContent('tpl/draft_component_content.php');
             }
             
-            return $res->getViewContent('tpl/draft_cmp.php');
+            return $res->getViewContent('tpl/draft_component.php');
             
     }
 
-        public function embedAction( HttpRequest $req, HttpResponse $res ){
+    public function embedAction( HttpRequest $req, HttpResponse $res ){
          //exit('nnnnnn');
          $cmp = new Model\Component( $req->getInt('component_id') );
          if( !$cmp->id ){
@@ -141,6 +141,7 @@ class ComponentController extends BaseController {
             $data = $validator->validate(new \NZ\Map(), $req);
             $component->comment = isset($data->comment)? $data->comment:'';
             $component->code = isset($data->code)? $data->code:'';
+            $component->state = Model\Component::STATE_UNPUBLISHED;
             if(!$component->id){
                 $component->setCreatedAt();
                 $component->user_id = $this->getUser()->id;

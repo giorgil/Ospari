@@ -101,6 +101,20 @@ function loadDrafts(url) {
 
     return false;
 }
+
+function try_publish(id,adminPath,el){
+     var url = '/'+adminPath + '/draft/publish';
+     var cb = function(res) {
+         $(el).removeClass('disabled');
+        if (res.success) {           
+            bootbox.alert('<div class="alert alert-success" >Post is now published!</div>');
+        } else {
+            bootbox.alert(res.message);
+        }
+    };
+    $(el).addClass('disabled');
+    $.fn.doPost({url: url, data: {draft_id: id, state:1}, timeout: 0, callback: cb});
+}
 /**************************************************************   
  
  Ospari = {
@@ -409,7 +423,7 @@ genericEditor = {
              h = h.replace('{{id}}', data.id);
              h = h.replace('{{comment}}', data.comment);
              h = h.replace('{{code}}', data.code);*/
-            $('#components').append(res.html);
+            $('#draft-components').append(res.html);
             $('#component-0').html('').removeClass('op-component-min-height');
         };
 
@@ -459,6 +473,9 @@ genericEditor = {
                 tpl = tpl.replace('{{onsubmit}}', ' onsubmit =" return genericEditor.submitChanges(this);"');
                 bootbox.dialog({message: tpl, title: 'Edit', buttons: {}});
                 genericEditor.initWysihtml5();
+                if(setting.name =='image'){
+                    genericEditor.initDz(componentID);
+                }
             } else {
                 alert(res.message);
             }
@@ -553,9 +570,9 @@ genericEditor = {
             "color": false, //Button to change color of font  
 
         });
-        genericEditor.wysihtml5 = $('textarea[name="comment"]').data("wysihtml5").editor;
+        //genericEditor.wysihtml5 = $('textarea[name="comment"]').data("wysihtml5").editor;
     },
-    initDz: function() {
+    initDz: function(componentID) {
         $("div#dropzone").dropzone(
                 {
                     url: genericEditor.uploadURL + '&type_id=' + genericEditor.currentCmpSetting.id,
@@ -572,19 +589,23 @@ genericEditor = {
                             this.removeFile(file);
                             bootbox.alert(message);
                         });
-
+                        this.on('sending', function(file, xhr, formData){
+                            formData.append('comment',$('#component-comment').val());
+                            if(componentID !==undefined){
+                                formData.append('component_id',componentID);
+                            }
+                        });
                         this.on("success", function(file, json, xmlHttp) {
                             if (json.success) {
-                                var data = json.cmp,
-                                        src = json.message;
-                                var h = $('#' + genericEditor.currentCmpSetting.res_tpl_name).html();
-                                h = h.replace('{{id}}', data.id);
-                                h = h.replace('{{src}}', src);
-                                h = h.replace('{{alt}}', 'Photo');
-                                h = h.replace('{{comment}}', data.comment ? data.comment : '');
-                                $('#component-' + data.id).remove();
-                                $('#components').append(h);
-                                $('#component-0').html('').removeClass('op-component-min-height');
+                                if(json.mode=='add'){
+                                    $('#component-' + json.data.id).remove();
+                                    $('#draft-components').append(json.html);
+                                    $('#component-0').html('').removeClass('op-component-min-height');
+                                }
+                                else{
+                                    $('#component-' + json.data.id).html(json.html);
+                                }
+                                bootbox.hideAll();
                             } else {
                                 this.removeFile(file);
                                 bootbox.alert(json.message);

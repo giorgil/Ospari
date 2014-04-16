@@ -8,7 +8,8 @@ Class Component extends \NZ\ActiveRecord {
     protected static $types = array();
     protected static $typesLoaded = FALSE;
     protected static $defaultType = NULL;
-
+    const STATE_PUBLISHED = 1;
+    const STATE_UNPUBLISHED =0;
 
     public function getTableName() {
        return OSPARI_DB_PREFIX.'components';
@@ -24,6 +25,9 @@ Class Component extends \NZ\ActiveRecord {
          * 
          */
         $where->equalTo('draft_id', $req->getInt('draft_id'));
+        if($map->state){
+            $where->equalTo('state', self::STATE_PUBLISHED);
+        }
         
         return new \NZ\Pager(new Component(), $where, $req->getInt('page'), $perPage, $order = 'order_nr ASC');
     }

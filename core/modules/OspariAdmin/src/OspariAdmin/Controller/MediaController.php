@@ -21,6 +21,7 @@ use OspariAdmin\Model\Draft;
 use \NZ\Filehandler;
 use \NZ\Image;
 use \NZ\Uri;
+use OspariAdmin\Model\Setting;
 class MediaController extends BaseController {
      public function uploadAction( HttpRequest $req, HttpResponse $res){
         $id = $req->getInt('draft_id');
@@ -37,35 +38,26 @@ class MediaController extends BaseController {
             if ($req->hasUpload()) {
                  $media = $this->handleUpload($req);
                  $draft2media = new Draft2Media(array('draft_id'=>$id,'media_id'=>$media->id));
-                 if( !$draft2media->id ){
-                      $draft2media->draft_id = $id;
-                      $draft2media->media_id = $media->id;
-                      $draft2media->save();
+                 $this->saveDratf2Media($draft, $draft2media, $media);
+                 $where = array();
+                 $mode = 'add';
+                 if($cmp_id = $req->getInt('component_id')){
+                     $where['draft_id']=$draft->id;
+                     $where['id'] = $cmp_id;
+                     $mode='edit';
                  }
-                 $draft->thumb = $media->thumb;
-                 $draft->media_id = $media->id;
-                 $draft->save();
-                 $cmp = new \OspariAdmin\Model\Component(array('code'=>$media->large,'draft_id'=>$draft->id));
-                 if(!$cmp->id){
-                     
-                        $purifier = new \HTMLPurifier();
-                        $cmp->comment = $purifier->purify($req->get('comment'));
-                     
-                        $cmp->code = $media->large;
-                        $cmp->user_id = $this->getUser()->id;
-                        $cmp->draft_id = $draft->id;
-                        $cmp->type_id = $req->getInt('type_id');
-                        $cmp->setCreatedAt();
-                        $counter = new \OspariAdmin\Model\Component();
-                        $count = $counter->count(array('draft_id'=>$draft->id));
-                        $cmp->order_nr = $count+1;
-                        $cmp->save();
-                 }
-                  $json->set('cmp',$cmp->toArray());
-                  $json->set('success', true);
-                  $json->set('message', OSPARI_URL.'/content/upload'.$media->large);
-                  $json->set('img_id', $media->id);
-                   return $res->sendJson($json->render());
+                 $cmp = new \OspariAdmin\Model\Component($where);
+                 $map = new \NZ\Map(array('media'=>$media, 'draft'=>$draft));
+                 $this->saveCmp($map, $cmp, $req);
+                 $obj = new \stdClass();
+                 $obj->success=true;
+                 $obj->data = $cmp->toArray();
+                 $res->setViewVar('component', $cmp);
+                 $res->setViewVar('use_iFrame', false);
+                 $obj->mode= $mode;
+                 $obj->html = $this->renderCode($cmp, $res, $mode);
+
+                 return $res->sendJson( json_encode($obj) );
            }
             else {
                 return $res->sendErrorMessageJSON('No Upload found');
@@ -76,8 +68,50 @@ class MediaController extends BaseController {
 
     }
     
+    protected function renderCode($component, $res, $mode = 'add'){
+            if( $mode == 'edit' ){
+                $res->setViewVar('hasHandle', true);
+                return $res->getViewContent('tpl/draft_component_content.php');
+            }
+            return $res->getViewContent('tpl/draft_component.php');
+            
+    }
+    private function saveDratf2Media($draft, $draft2media, $media){
+        if( !$draft2media->id ){
+            $draft2media->draft_id = $draft->id;
+            $draft2media->media_id = $media->id;
+            $draft2media->save();
+       }
+       $this->updateDraft($draft, $media);
+       
+    }
+    private function updateDraft($draft, $media){
+        $draft->thumb = $media->thumb;
+        $draft->media_id = $media->id;
+        $draft->save();
+    }
+
+    private function saveCmp(\NZ\Map $map,$cmp, $req){
+        $purifier = new \HTMLPurifier();
+        $media = $map->media;
+        $draft  = $map->draft;
+        $cmp->comment = $purifier->purify($req->get('comment'));
+        $cmp->code = $media->thumb;
+        if(!$cmp->id){
+               $cmp->user_id = $this->getUser()->id;
+               $cmp->draft_id = $draft->id;
+               $cmp->type_id = $req->getInt('type_id');
+               $cmp->setCreatedAt();
+               $counter = new \OspariAdmin\Model\Component();
+               $count = $counter->count(array('draft_id'=>$draft->id));
+               $cmp->order_nr = $count+1;
+        }
+        $cmp->save();
+    }
+
     private function handleUpload(HttpRequest $req){
         $fh = new Filehandler();
+        $setting = new Setting();
         $subPath = '/'.date('Y').'/'. date('m');
         $path = '/content/upload' .$subPath;
         $absolute_path = $_SERVER['DOCUMENT_ROOT'] . $path;
@@ -92,10 +126,11 @@ class MediaController extends BaseController {
 
         $large = $subPath.'/'.$slug . '.' . $img->getExtension();
         $img->save($absolute_path . '/' . $slug . '.' . $img->getExtension());
-
-        $img->scale('300', '300');
-        $img->save($absolute_path . '/' . $slug . '-300x300.' . $img->getExtension());
-        $thumb = $subPath.'/'.$slug . '-300x300.' . $img->getExtension();
+        $w = $setting->get('img_width')?$setting->get('img_width'):'600';
+        $h =  $setting->get('img_height')?  $setting->get('img_height'): '450';
+        $img->scale($w,$h);
+        $img->save($absolute_path . '/' . $slug . '-'.$w.'x'.$h.'.' . $img->getExtension());
+        $thumb = $subPath.'/'.$slug .  '-'.$w.'x'.$h.'.' . $img->getExtension();
         
         $media = new Media(array('large'=>$large,'thumb'=>$thumb,'user_id'=>  $this->getUser()->id));
         

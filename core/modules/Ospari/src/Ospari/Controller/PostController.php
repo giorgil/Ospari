@@ -15,6 +15,7 @@ namespace Ospari\Controller;
 
 use NZ\HttpRequest;
 use NZ\HttpResponse;
+use OspariAdmin\Model;
 
 class PostController extends BaseController {
 
@@ -77,7 +78,12 @@ class PostController extends BaseController {
 
         $res->setViewVar('defaultContent', $helper->getDefaultContent());
         $res->setViewVar('postContent', $helper->getPostContent());
-
+        $map = new \NZ\Map(array('state'=>  Model\Component::STATE_PUBLISHED));
+        $req->set('draft_id', $post->draft_id);
+        $componentPager = Model\Component::getPager($map, $req);
+        $res->setViewVar('components', $componentPager->getItems() );
+        $componentsHtml = $res->getViewContent('component.php');
+        $res->setViewVar('componentsHTML', $componentsHtml);
         $res->buildBody('post.php');
     }
 

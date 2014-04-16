@@ -10,7 +10,7 @@ $postContent = $this->postContent;
 
 $postContent = str_replace('{{#foreach', '{{#each', $postContent);
 
-
+$componentsHTML = $this->componentsHTML;
 
 $defaultContent = str_replace('{{{body}}}', $postContent, $defaultContent);
 
@@ -23,6 +23,8 @@ $engine->addHelper('asset', function($template, \Handlebars\Context $context, $a
 $blog = $this->blog;
 $post = $this->post;
 
+
+$post->content = $post->content.''.$componentsHTML;
 
 $data = array(
     'meta_title' => $post->title,

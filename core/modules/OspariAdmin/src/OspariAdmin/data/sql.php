@@ -120,6 +120,33 @@ return array(
         `key_value` text,
         PRIMARY KEY (`id`),
         UNIQUE KEY `key_name` (`key_name`)
+      ) ENGINE=InnoDB",
+     "ALTER TABLE `".OSPARI_DB_PREFIX."posts` ADD code text AFTER content",
+     "ALTER TABLE  `".OSPARI_DB_PREFIX."components` ADD  `state` TINYINT( 1 ) NOT NULL DEFAULT  '0' AFTER  `setting`",
+    "CREATE TABLE IF NOT EXISTS `".OSPARI_DB_PREFIX."component_types` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(20) NOT NULL,
+        `short_name` char(20) NOT NULL,
+        `label` char(30) NOT NULL,
+        `tpl_name` char(50) NOT NULL,
+        `res_tpl_name` varchar(100) NOT NULL,
+        `javascript` text NOT NULL,
+        `validator` varchar(50) DEFAULT NULL,
+        PRIMARY KEY (`id`)
+      ) ENGINE=InnoDB ",
+    "CREATE TABLE IF NOT EXISTS `".OSPARI_DB_PREFIX."components` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `setting` text,
+        `state` tinyint(1) NOT NULL DEFAULT '0',
+        `user_id` int(11) NOT NULL,
+        `draft_id` int(11) NOT NULL,
+        `comment` text,
+        `code` text,
+        `keywords` varchar(255) NOT NULL,
+        `type_id` int(11) NOT NULL,
+        `order_nr` int(11) NOT NULL,
+        `created_at` datetime NOT NULL,
+        PRIMARY KEY (`id`)
       ) ENGINE=InnoDB"
             
         );

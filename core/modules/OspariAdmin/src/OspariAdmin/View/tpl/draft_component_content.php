@@ -1,14 +1,17 @@
 <?php
 
-$hasHandle = TRUE;
+
 if (!isset($cmp)) {
     $cmp = $this->component;
-    $use_iFrame = $this->use_iFrame;
     $hasHandle = $this->hasHandle;
+}
+if(!isset($hasHandle)){
+    $hasHandle = TRUE;
 }
 $componentType = $cmp->getType();
 $typeName = $componentType->name;
 $componentID = $cmp->id;
+$use_iFrame = $this->use_iFrame;
 ?>
 
 

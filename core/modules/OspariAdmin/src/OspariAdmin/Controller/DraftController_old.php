@@ -21,8 +21,6 @@ class DraftControllerOld extends BaseController {
     }
     public function renderEditorAction( HttpRequest $req, HttpResponse $res ){
         
-        
-        
         $res->buildBody('draft/editor.php');
     }
 

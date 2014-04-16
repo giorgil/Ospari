@@ -14,43 +14,61 @@ use NZ\HttpResponse;
 use OspariAdmin\Model;
 use OspariAdmin\Model\Tag;
 use OspariAdmin\Model\PostMeta;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
 use OspariAdmin\Validator\Text;
 
 class DraftController extends BaseController {
 
     public function editAction(HttpRequest $req, HttpResponse $res) {
-        
+    
         $draft = new Model\Draft( $req->getInt('draft_id') );
         $res->setViewVar('draft', $draft);
+        $res->setViewVar('tags', Tag::getTagsAsString($draft->id));
         $res->setViewVar('cmpTypes', $this->buildCmpTypes());
-        
-        /*
-        $sql = new Select(OSPARI_DB_PREFIX.'components');
-        $sql->join(
-                    OSPARI_DB_PREFIX.'component_types', 
-                    OSPARI_DB_PREFIX.'components.type_id='.OSPARI_DB_PREFIX.'component_types.id', 
-                    array('name','short_name','label','tpl_name'),
-                    Select::JOIN_INNER
-                );
-        $where = new Where();
-        $where->equalTo(OSPARI_DB_PREFIX.'components.draft_id',$draft->id);
-        
-        $sql->where($where);
-        $sql->order(array('order_nr'=>'ASC'));
-        
-        
-        $res->setViewVar('components', Model\Component::findAll($sql));
-         * 
-         */
         $map = new \NZ\Map();
         $componentPager = Model\Component::getPager($map, $req);
-         $res->setViewVar('components', $componentPager->getItems() );
+        $res->setViewVar('components', $componentPager->getItems() );
         $res->buildBody('draft/edit.php');
         
         
     }
+    
+    public function publishDraftAction( HttpRequest $req, HttpResponse $res){
+        if(!$req->isAjax()){
+            return $res->sendErrorMessage('Bad Request!');
+        }
+        
+        if(!$req->isPOST()){
+            return $res->sendErrorMessage('Bad Request Method!');
+        }
+        $model = new \OspariAdmin\Model\Draft($req->getInt('draft_id'));
+        if(!$model->id){
+            return $res->sendErrorMessageJSON('Draft not found!');
+        }
+        if ($req->state == \OspariAdmin\Model\Draft::STATE_PUBLISHED) {
+            $model->state = \OspariAdmin\Model\Draft::STATE_PUBLISHED;
+            $model->setDateTime('published_at', new \DateTime());
+            $post = \OspariAdmin\Model\Post::findOne( array('draft_id' => $model->id ) );
+            $modelArray = $model->toArray();
+            unset($modelArray['id']);
+         
+            if( !$post ){
+                $post = new \OspariAdmin\Model\Post();
+                $post->draft_id = $model->id;
+            }
+
+            foreach ($modelArray as $k => $v) {
+                $post->set($k, $v);
+            }
+            $post->save();
+            $model->save();
+            $sql = "UPDATE ".OSPARI_DB_PREFIX."components SET state='".  Model\Component::STATE_PUBLISHED."' WHERE draft_id='".$model->id."'";
+            $model->query($sql);
+            return $res->sendSuccessMessageJSON('Draft successfully published');
+           
+        }
+        return $res->sendErrorMessageJSON('something went wrong');
+    }
+
     public function updateSlugAction( HttpRequest $req, HttpResponse $res ){
          $user = $this->getUser();
          if($req->isPOST()){
@@ -170,8 +188,6 @@ class DraftController extends BaseController {
     }
 
     private function createOrEdit(\NZ\BootstrapForm $form, $req, $user) {
-
-
         $model = new \OspariAdmin\Model\Draft($req->getInt('draft_id'));
 
         if (!$model->id) {
@@ -201,23 +217,7 @@ class DraftController extends BaseController {
         $model->setDateTime('edited_at', new \DateTime());
         $model->save();
 
-        if ($req->state == \OspariAdmin\Model\Draft::STATE_PUBLISHED) {
-            
-            $post = \OspariAdmin\Model\Post::findOne( array('draft_id' => $model->id ) );
-            $modelArray = $model->toArray();
-            unset($modelArray['id']);
-         
-            if( !$post ){
-                $post = new \OspariAdmin\Model\Post();
-                $post->draft_id = $model->id;
-            }
-
-            foreach ($modelArray as $k => $v) {
-                $post->set($k, $v);
-            }
-            $post->save();
-           
-        }
+        
         return $model;
     }
 

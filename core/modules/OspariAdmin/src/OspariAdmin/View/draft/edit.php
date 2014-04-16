@@ -45,7 +45,7 @@ $cmpTypes = $this->cmpTypes;
 
         </div>
 
-        <div id="draft-component-0" class="">
+        <div id="component-0" class="">
 
         </div>
         <hr>
@@ -55,8 +55,22 @@ $cmpTypes = $this->cmpTypes;
                 <a href="#" class="btn btn-default" data-component-type="<?= $type['name'] ?>"><?= $type['short_name'] ?></a>
             <?php endforeach; ?>
         </div>
+        
     </div>
-
+    <div class="col-md-4">
+            <div class="form-group">
+                <button type="button" class="btn btn-danger btn-lg btn-block" onclick=" return try_publish('<?php echo $draft->id?>','<?php echo OSPARI_ADMIN_PATH ?>', this);">Publish Draft</button>
+            </div>
+        
+        <br>
+        <br>
+            <div class="form-group">
+                <label for="tag-input">Tags</label>
+                <input type="text" name="tags" id="tag-input" class="form-control" placeholder="Type something and hit enter" value="<?php echo $this->tags ?>">
+                <input type="hidden" name="input-draft-id" id="input-draft-id" value="<?=$draft->id?>">
+            </div>
+    </div>
+</div>
 
     <script id="component-all-types-tpl-response" type="text/x-handlebars-template">
         <div id="draft-component-{{id}}">
@@ -123,9 +137,42 @@ $cmpTypes = $this->cmpTypes;
 
         $(document).ready( function(){
             genericEditor.amdinPath = '/<?php echo OSPARI_ADMIN_PATH ?>';
-        genericEditor.addURL= '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/add-component'; ?>';
-        genericEditor.editURL= '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/edit-component'; ?>';
-        genericEditor.uploadURL= '/<?php echo OSPARI_ADMIN_PATH . '/media/upload?draft_id=' . $draft->id; ?>';
-        genericEditor.cmpTypes = <?php echo json_encode($cmpTypes); ?>;
+            genericEditor.addURL= '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/add-component'; ?>';
+            genericEditor.editURL= '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/edit-component'; ?>';
+            genericEditor.uploadURL= '/<?php echo OSPARI_ADMIN_PATH . '/media/upload?draft_id=' . $draft->id; ?>';
+            genericEditor.cmpTypes = <?php echo json_encode($cmpTypes); ?>;
+            
+            
+             $('#tag-input').tagsinput({
+                    typeahead:{
+                         source: function(query) {
+                            return $.get('<?php echo OSPARI_URL.'/'.OSPARI_ADMIN_PATH ?>'+'/tags');
+                          }
+                    }
+                });
+                $('#tag-input').bind('itemAdded', function(event){
+                    $.post(
+                            '<?php echo OSPARI_URL.'/'.OSPARI_ADMIN_PATH ?>'+'/tag/add',
+                            {tag:event.item,draft_id:$('#input-draft-id').val()}, 
+                            function(json){
+                                if(!json.success){
+                                        bootbox.alert(json.message);
+                                    }
+                            },
+                            'json'
+                          );
+                });
+                $('#tag-input').bind('itemRemoved', function(event){
+                     $.post(
+                             '<?php echo OSPARI_URL.'/'.OSPARI_ADMIN_PATH ?>'+'/tag/delete',
+                             {tag:event.item,draft_id:$('#input-draft-id').val()}, 
+                             function( json ){
+                                    if(!json.success){
+                                        bootbox.alert(json.message);
+                                    }
+                             },
+                            'json');
+                });
+                $('.bootstrap-tagsinput').addClass('col-md-10');
         } );     
     </script>
