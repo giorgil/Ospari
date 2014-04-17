@@ -16,7 +16,7 @@ Class Draft extends \NZ\ActiveRecord {
     }
     
     public function getEditUrl() {
-        return OSPARI_ADMIN_PATH . '/draft/edit/' . $this->id;
+        return OSPARI_ADMIN_PATH . '/draft/components/edit/' . $this->id;
     }
 
     static public function getPager($map, $req, $perPage = 20) {

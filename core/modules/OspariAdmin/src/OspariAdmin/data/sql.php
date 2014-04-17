@@ -37,7 +37,7 @@ return array(
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB",
     
-            "CREATE TABLE IF NOT EXISTS `" . OSPARI_DB_PREFIX . "sessions` (
+"CREATE TABLE IF NOT EXISTS `" . OSPARI_DB_PREFIX . "sessions` (
   `sid` char(33) NOT NULL,
   `user_id` int(11) NOT NULL,
   `session` text NOT NULL,
@@ -147,6 +147,7 @@ return array(
         `order_nr` int(11) NOT NULL,
         `created_at` datetime NOT NULL,
         PRIMARY KEY (`id`)
-      ) ENGINE=InnoDB"
+      ) ENGINE=InnoDB",
+    "ALTER TABLE  `".OSPARI_DB_PREFIX."post_meta` DROP INDEX  `key_name`"
             
         );

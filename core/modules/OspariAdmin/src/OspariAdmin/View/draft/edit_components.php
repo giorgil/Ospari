@@ -17,10 +17,19 @@ $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap-tagsinput.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap3-wysihtml5.min.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/flippant.css');
 
-$title = 'Edit';
+$title = 'Edit Components';
 $this->title = $title;
 $draft = $this->draft;
 $cmpTypes = $this->cmpTypes;
+
+
+$metaFormTpl ='<form class="form-horizontal" id="meta-form"  method="post">';
+
+
+foreach ($this->metaForm->getElements() as $el){
+    $metaFormTpl.=$el->toHTML_V3();
+}
+$metaFormTpl.= '</form>';
 ?>
 <div class="col-lg-6 col-lg-offset-1" id="content-preview">
     
@@ -30,10 +39,17 @@ $cmpTypes = $this->cmpTypes;
 </div>
 <div class="row">
     <div class="col-md-6 col-md-offset-1">
-        <h1><?php echo $this->escape($draft->title); ?></h1>
-
-        <div>
-            <?php echo $draft->content; ?>
+        <div id="executive-summary">
+            <h1 id="draft-title"><?php echo $this->escape($draft->title); ?></h1>
+            <div class="component">
+                <?php echo $draft->content; ?>
+            </div>
+            <div class="component-handle">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"  title="Config"><i class="fa fa-2x fa-th-list"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="<?php echo '/'.OSPARI_ADMIN_PATH.'/draft/edit/'.$draft->id?>" data-draft-id="<?php echo $draft->id; ?>" class="component-handle-edit" title="edit"><i class="fa fa-edit"></i> edit</a></li>
+                </ul>
+            </div>
         </div>
         <div id="draft-components">
 
@@ -58,8 +74,18 @@ $cmpTypes = $this->cmpTypes;
         
     </div>
     <div class="col-md-4">
-            <div class="form-group">
-                <button type="button" class="btn btn-danger btn-lg btn-block" onclick=" return try_publish('<?php echo $draft->id?>','<?php echo OSPARI_ADMIN_PATH ?>', this);">Publish Draft</button>
+            <div class="form-group pull-right">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        Operations
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu text-left" id="draft-ul">
+                        <li><a href="#" onclick=" return updateSlug('<?php echo $draft->id ?>','<?php echo OSPARI_ADMIN_PATH ?>', this);" id="edit-slug"><i class="fa fa-edit"></i> Edit Url</a></li>                   
+                        <li id="meta-li"><a href="#" onclick=" return addMeta('<?php echo $draft->id ?>','<?php echo OSPARI_ADMIN_PATH ?>', this);"><i class="fa fa-code"></i>Meta-Tags</a></li>
+                    </ul>
+                </div>
+                <button type="button" class="btn btn-danger" onclick=" return try_publish('<?php echo $draft->id?>','<?php echo OSPARI_ADMIN_PATH ?>', this);"><?php echo $this->hasPost? 'Update':'Publish' ?></button>
             </div>
         
         <br>
@@ -142,7 +168,6 @@ $cmpTypes = $this->cmpTypes;
             genericEditor.uploadURL= '/<?php echo OSPARI_ADMIN_PATH . '/media/upload?draft_id=' . $draft->id; ?>';
             genericEditor.cmpTypes = <?php echo json_encode($cmpTypes); ?>;
             
-            
              $('#tag-input').tagsinput({
                     typeahead:{
                          source: function(query) {
@@ -176,3 +201,16 @@ $cmpTypes = $this->cmpTypes;
                 $('.bootstrap-tagsinput').addClass('col-md-10');
         } );     
     </script>
+    <script id="meta-form-script" type="text/x-handlebars-template">
+        <?php echo $metaFormTpl; ?>
+    </script>
+    <script id="slug-form-script" type="text/x-handlebars-template">
+        <div class="form-horizontal" role="form">
+           <div class="form-group">
+              <div class="col-sm-12">           
+                 <input type="text" class="form-control" id="slug" placeholder="Edit slug" value="<?=$this->escape($draft->slug)?>">
+              </div>
+           </div>
+        </div>
+    </script>  
+      

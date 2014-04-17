@@ -18,20 +18,46 @@ use OspariAdmin\Validator\Text;
 
 class DraftController extends BaseController {
 
-    public function editAction(HttpRequest $req, HttpResponse $res) {
-    
-        $draft = new Model\Draft( $req->getInt('draft_id') );
+    public function editComponentsAction(HttpRequest $req, HttpResponse $res) {
+        $draft = new Model\Draft($req->getInt('draft_id'));
         $res->setViewVar('draft', $draft);
         $res->setViewVar('tags', Tag::getTagsAsString($draft->id));
         $res->setViewVar('cmpTypes', $this->buildCmpTypes());
+        $res->setViewVar('hasPost', \Ospari\Model\Post::findOne(array('draft_id'=>$draft->id))?TRUE:FALSE);
         $map = new \NZ\Map();
         $componentPager = Model\Component::getPager($map, $req);
-        $res->setViewVar('components', $componentPager->getItems() );
-        $res->buildBody('draft/edit.php');
-        
-        
+        $res->setViewVar('components', $componentPager->getItems());
+        $res->setViewVar('metaForm', $this->createMetaForm($req, $res->getView()));
+        $res->buildBody('draft/edit_components.php');
     }
     
+    public function editAction(HttpRequest $req, HttpResponse $res){
+        $draft = new Model\Draft($req->getInt('draft_id'));
+        if(!$draft->id){
+            return $res->sendErrorMessage('Draft not found');
+        }
+        $view = $res->getView();
+        $user = $this->getUser();
+        $form = null;
+        if ($req->isPOST()) {
+            try {
+                $form = $this->createForm($view, $req);
+                $draft = $this->createOrEdit($form, $req, $user);
+                $res->redirect('/'.OSPARI_ADMIN_PATH.'/draft/components/edit/'.$draft->id);
+            } catch (\Exception $exc) {
+                $res->setViewVar('Exception', $exc);
+            }
+        }else{
+            
+            $draft->toHttpRequest($req);
+            $form = $this->createForm($view, $req);
+        }
+        $res->setViewVar('form', $form);
+        $res->setViewVar('draft', $draft);
+        $res->setViewVar('req', $req);
+        return $res->buildBody('draft/edit.php');
+    }
+
     public function publishDraftAction( HttpRequest $req, HttpResponse $res){
         if(!$req->isAjax()){
             return $res->sendErrorMessage('Bad Request!');
@@ -110,7 +136,7 @@ class DraftController extends BaseController {
             try {
                 $draft = $this->createOrEdit($form, $req, $user);
                 if($draft){
-                    $res->redirect('/'.OSPARI_ADMIN_PATH.'/draft/edit/'.$draft->id);
+                    $res->redirect('/'.OSPARI_ADMIN_PATH.'/draft/components/edit/'.$draft->id);
                 }
                 
             } catch (\Exception $exc) {
@@ -119,7 +145,7 @@ class DraftController extends BaseController {
         }
         
         $res->setViewVar('form', $form);
-
+        $res->setViewVar('req', $req);
         $res->buildBody('draft/create.php');
     }
     
@@ -188,8 +214,8 @@ class DraftController extends BaseController {
     }
 
     private function createOrEdit(\NZ\BootstrapForm $form, $req, $user) {
+        $this->validateForm($form, $req);
         $model = new \OspariAdmin\Model\Draft($req->getInt('draft_id'));
-
         if (!$model->id) {
             $model->setCreatedAt();
             $model->state = $req->getInt('state');
@@ -286,17 +312,8 @@ class DraftController extends BaseController {
                 ->setAttribute('autofocus', 'autofocus')
                 ->setLabelText('Excerpt (Executive summary)')
                 ->setAttribute('id', 'draft-content-textarea');
-
-        /* 
-        $form->createElement('tags')
-                ->setAttribute('autocomplete', 'off')
-                ->setAttribute('placeholder', 'Type something and hit enter')
-                ->setAttribute('id', 'tag-input')
-                ->setRequired();
-         * 
-         */
-        
         $form->createHiddenElement('state', 'draft', 'post-state-input');
+        
         return $form;
     }
     
@@ -319,11 +336,11 @@ class DraftController extends BaseController {
             if($meta['key_name'] && $meta['key_value']){
                 $model = new PostMeta(array('draft_id'=>$draft_id,'key_name'=>$meta['key_name']));
                 if(!$model->id){
-                    $model->key_value = $meta['key_value'];
                     $model->key_name = $meta['key_name'];
                     $model->draft_id = $draft_id;
-                    $model->save();
                 }
+                $model->key_value = $meta['key_value'];
+                $model->save();
             }
         }
     }
@@ -338,7 +355,9 @@ class DraftController extends BaseController {
         return $arr;
     }
     protected function createMetaForm(\NZ\HttpRequest $req , $view){
-        $req = $this->setReqWithMetaData($req);
+        if(!$req->isPOST()){
+            $req = $this->setReqWithMetaData($req);
+        }
         $form = new \NZ\BootstrapForm($view, $req);
         $form->createElement('meta-title')
                 ->setLabelText('Title')

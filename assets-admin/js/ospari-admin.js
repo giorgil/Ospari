@@ -101,7 +101,87 @@ function loadDrafts(url) {
 
     return false;
 }
+/***************************************************************************************************************************/
+function addMeta(draft_id,adminPath) {
+    if (!draft_id) {
+        bootbox.alert('Not auto saved yet');
+    }
 
+    var path = '/'+adminPath+'/draft/meta/' + draft_id;
+    var callback = function(res) {
+        if (res.success) {
+            //$('#draft-slug-bx').html(res.message+Ospari.getEditSlugBtnTpl());
+        } else {
+            bootbox.alert(res.message);
+            return false;
+        }
+    };
+    bootbox.dialog({
+        message: $('#meta-form-script').html(),
+        title: "Enter Meta-Tags",
+        buttons: {
+            cancel: {
+                label: "<i class=\"fa fa-times\"></i> Cancel",
+                className: "btn",
+                callback: function() {
+
+                }
+            },
+            save: {
+                label: "<i class=\"fa fa-check\"></i> Save",
+                className: "btn-primary",
+                callback: function() {
+
+                    $.post(path, $('#meta-form').serialize(), callback);
+                }
+            }
+        }
+    });
+    return false;
+}
+ /******************************************************************************************************************************************/
+ function updateSlug(draft_id,adminPath) {
+    if (!draft_id) {
+        bootbox.alert('Not auto saved yet');
+    }
+
+    var path = '/'+adminPath+ '/draft/edit-slug';
+    var callback = function(res) {
+        if (res.success) {
+            $('#draft-title').html();
+        } else {
+            bootbox.alert(res.message);
+            return false;
+        }
+    };
+    bootbox.dialog({
+        message:  $('#slug-form-script').html(),
+        title: "Change Slug",
+        buttons: {
+            cancel: {
+                label: "<i class=\"fa fa-times\"></i> Cancel",
+                className: "btn",
+                callback: function() {
+
+                }
+            },
+            save: {
+                label: "<i class=\"fa fa-check\"></i> Save",
+                className: "btn-primary",
+                callback: function() {
+                    var slug = $('#slug').val();
+                    if (!slug) {
+                        return false;
+                    }
+                    $.post(path, {draft_id: draft_id, slug: slug}, callback);
+                }
+            }
+        }
+    });
+    return false;
+
+}
+ /********************************************************************************************/
 function try_publish(id,adminPath,el){
      var url = '/'+adminPath + '/draft/publish';
      var cb = function(res) {
@@ -402,14 +482,8 @@ function try_publish(id,adminPath,el){
  */
 
 genericEditor = {
-    /* addURL: addURL,
-     editURL: editURL,
-     uploadURL: uploadURL,*/
     init: function() {
         $('#component-btns a').on('click', genericEditor.addComponent);
-        //$('#component-btns a[data-component-type="text"]').trigger('click');
-        //$('.draft-components-handle-edit').on('click', genericEditor.editClick);
-
     },
     submitComponentFrom: function(f) {
         var url = $(this).attr('action');
@@ -418,11 +492,6 @@ genericEditor = {
                 bootbox.alert(res.message);
                 return;
             }
-            var data = res.data;
-            /*var h = $('#' + genericEditor.currentCmpSetting.res_tpl_name).html();
-             h = h.replace('{{id}}', data.id);
-             h = h.replace('{{comment}}', data.comment);
-             h = h.replace('{{code}}', data.code);*/
             $('#draft-components').append(res.html);
             $('#component-0').html('').removeClass('op-component-min-height');
         };
@@ -570,7 +639,6 @@ genericEditor = {
             "color": false, //Button to change color of font  
 
         });
-        //genericEditor.wysihtml5 = $('textarea[name="comment"]').data("wysihtml5").editor;
     },
     initDz: function(componentID) {
         $("div#dropzone").dropzone(

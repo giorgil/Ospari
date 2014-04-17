@@ -6,27 +6,21 @@ $form = $this->form;
 
 $this->setJS(OSPARI_URL . '/assets-admin/js/bootstrap3-wysihtml5.all.min.js');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap3-wysihtml5.min.css');
+$btn_text = 'Next';
+$title = $this->req->title;
+$text = $this->req->content;
 ?>
-
-<div class="row">
-    <div class="col-lg-6 col-lg-offset-3">
-        <form role="form" action="<?php echo $form->getAction(); ?>" method="post">
-            <div class="form-group">
-                <label for="draft-title-input">Title</label>
-                <input type="text" class="form-control" id="draft-title-input" name="title">
-            </div>
-            <div class="form-group">
-                <label for="draft-content-textarea">Excerpt (Executive summary)</label>
-                <textarea rows="10" autofocus="autofocus" id="draft-content-textarea" cols="8" name="content" class="form-control"></textarea>
-            </div>
-            <input type="hidden" name="state" value="0">
-            <button type="submit" class="btn btn-primary pull-right">Next</button>
-        </form>
-    </div>
-
-</div>
+<?php include __DIR__.'/../tpl/exec_summary.php'; ?>
 <script>
     $(function (){
-        $('#draft-content-textarea').wysihtml5();
+        $('#draft-content-textarea').wysihtml5({
+            'font-styles': false,
+            "blockquote": false,
+            "lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+            "html": false, //Button which allows you to edit the generated HTML. Default false
+            "link": true, //Button to insert a link. Default true
+            "image": false, //Button to insert an image. Default true,
+            "color": false, //Button to change color of font  
+        });
     });
 </script>

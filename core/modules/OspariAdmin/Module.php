@@ -44,6 +44,7 @@ class Module {
             '/'.OSPARI_ADMIN_PATH.'/tag/delete' => array( __NAMESPACE__.'\Controller\TagController',  'deleteAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/auto-save' => array( __NAMESPACE__.'\Controller\DraftController',  'autoSaveAction' ),
             '/'.OSPARI_ADMIN_PATH.'/media/upload' => array( __NAMESPACE__.'\Controller\MediaController',  'uploadAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/draft/components/edit/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'editComponentsAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/edit/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'editAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/delete/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'deleteAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/unpublish/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'unpublishAction' ),

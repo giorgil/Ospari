@@ -147,3 +147,10 @@ Generic Editor Style
     display: block !important;
     width: auto !important;
 }
+#executive-summary:hover .component-handle{
+    display: block;
+}
+#executive-summary .component-handle{
+    top: 20px;
+    right: 15px;
+}
