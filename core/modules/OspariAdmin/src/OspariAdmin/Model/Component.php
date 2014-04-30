@@ -59,6 +59,8 @@ Class Component extends \NZ\ActiveRecord {
        
     }
     
+     
+    
     public function getOrderNr($draft_id){
         $model =  new Component();
         $nr = $model->count(array('draft_id'=>$draft_id));

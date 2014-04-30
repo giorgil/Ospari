@@ -80,15 +80,22 @@ class InstallController {
     protected function install($req) {
         $db = \NZ\DB_Adapter::getInstance();
 
+        
+       
+        
         foreach ($this->getSql() as $sql) {
+            
             $result = $db->query($sql, \Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
         }
 
+        
         $settting = new \OspariAdmin\Model\Setting();
         $settting->set('email', $req->email);
         $settting->set('title', $req->title);
-        $settting->set('ospari_version', '0.1');
+        $settting->set('ospari_version', OSPARI_VERSION);
         $settting->save();
+          
+         
 
         $user = new \OspariAdmin\Model\User(array('email' => $req->email));
         $user->email = $req->email;
@@ -132,7 +139,7 @@ class InstallController {
     }
 
     protected function getSql() {
-        return __DIR__.'/../data/sql.php';
+        return include(__DIR__.'/../data/sql.php');
     }
 
 }

@@ -108,7 +108,7 @@ URL: <span id="draft-slug-bx" class="bold">
      </span>-->
     <div class="btn-group">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-      Operations
+        <i class="fa fa-cog"></i>
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu text-left" id="draft-ul">

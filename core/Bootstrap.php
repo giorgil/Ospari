@@ -43,6 +43,11 @@ Class Bootstrap {
             $sess->user_id = $sess->getUser_id();
         }
     }
+
+     public function checkDBConnect($route) {
+         \NZ\DB_Adapter::getInstance();
+     }
+    
     public function handleExecption(\Exception $exc) {
         if (!$this->hasDBConfig()) {
             include ( __DIR__ . '/modules/OspariAdmin/src/OspariAdmin/View/tpl/headers.php' );
@@ -52,34 +57,27 @@ Class Bootstrap {
             echo '</div></body></html>';
             return;
         }
-        
-         
+
+
 
         $prevException = $exc->getPrevious();
         if (is_object($prevException) && !isset($_GET['code'])) {
             $code = $prevException->getCode();
-             if ($code == '42S02') {
+
+
+            if ($code == '42S02') {
                 //Table not found on database
                 // redirect to install
                 \header('location: ' . OSPARI_URL . '/install?code=' . $code);
                 exit(1);
             }
-            
-            if ($prevException instanceof \PDOException) {
-                //Database not found
-               
-                include ( __DIR__ . '/modules/OspariAdmin/src/OspariAdmin/View/tpl/headers.php' );
-                echo '<style>body{padding:0px !important;}</style><div class="col-lg-12">';
-                echo '<h1>'.$exc->getMessage().'</h1>';
-                echo '<pre>'.$this->exceptionToString($exc).'</pre>';
-                echo '</div></body></html>';
-                return;
-            }
+
+
 
             $code = $prevException->getCode();
 
             //42000
-
+            
             if ($code == '1049') {
                 //Database not found
                 $confg = \NZ\Config::getInstance();
@@ -91,13 +89,24 @@ Class Bootstrap {
                 echo '</div></body></html>';
                 return;
             }
-
+            
 
             if ($code == '42S02') {
                 //Table not found on database
                 // redirect to install
                 \header('location: ' . OSPARI_URL . '/install?code=' . $code);
                 exit(1);
+            }
+
+            if ($prevException instanceof \PDOException) {
+                //Database not found
+
+                include ( __DIR__ . '/modules/OspariAdmin/src/OspariAdmin/View/tpl/headers.php' );
+                echo '<style>body{padding:0px !important;}</style><div class="col-lg-12">';
+                echo '<h1>' . $exc->getMessage() . '</h1>';
+                echo '<pre>' . $this->exceptionToString($exc) . '</pre>';
+                echo '</div></body></html>';
+                return;
             }
         }
 
@@ -108,6 +117,7 @@ Class Bootstrap {
 
         echo '<h1>' . $exc->getMessage() . '</h1>';
         echo '<hr><pre>';
+        /*
         $debug = $exc->__toString();
         $debug = str_replace($_SERVER['DOCUMENT_ROOT'], '', $debug);
 
@@ -121,7 +131,11 @@ Class Bootstrap {
                 echo '<pre>' . $debugArr[1] . '</pre>';
             }
         }
+         * 
+         */
 
+        echo $this->exceptionToString($exc);
+        
         echo '</div></body></html>';
     }
 
@@ -165,7 +179,7 @@ Class Bootstrap {
 //        } else {
 //            $port = ':' . $ServerPort;
 //        }
-        return $scheme . $_SERVER['HTTP_HOST'] ;
+        return $scheme . $_SERVER['HTTP_HOST'];
     }
 
     public function hasDBConfig() {
@@ -173,7 +187,7 @@ Class Bootstrap {
         if (!$db_read = $confg->get('db_read')) {
             return FALSE;
         }
-     
+
         $keys = array('database',
             'username',
             'password',
@@ -200,11 +214,11 @@ Class Bootstrap {
         $r = $result->count();
         return (1 == $r);
     }
-    
-    public function exceptionToString(\Exception $exc){
-        $str  =  $exc->__toString();
+
+    public function exceptionToString(\Exception $exc) {
+        $str = $exc->__toString();
         $str = str_replace($_SERVER['DOCUMENT_ROOT'], '', $str);
-        
+
         return $str;
     }
 

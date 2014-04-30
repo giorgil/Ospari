@@ -5,10 +5,10 @@ namespace OspariAdmin\Validator;
 /**
  * Description of Tweet
  *
- * @author fon-pah
+ * @author 28h
  */
 use NZ\HttpRequest;
-class Tweet extends Component{
+class Instagramm extends Component{
     
     public function validate(\NZ\Map $map, HttpRequest $req, $type= NULL) {
         return parent::validate($map, $req,'tweet');

@@ -14,6 +14,7 @@ return array(
     'OspariAdmin\Controller\TagController'       => __DIR__ . '/src/OspariAdmin/Controller/TagController.php',
     'OspariAdmin\Controller\UpdateController'    => __DIR__ . '/src/OspariAdmin/Controller/UpdateController.php',
     'OspariAdmin\Controller\UserController'      => __DIR__ . '/src/OspariAdmin/Controller/UserController.php',
+    'OspariAdmin\Controller\MediaLibController'      => __DIR__ . '/src/OspariAdmin/Controller/MediaLibController.php',
     'OspariAdmin\Mailer'                         => __DIR__ . '/src/OspariAdmin/etc/Mailer.php',
     'OspariAdmin\Helper\AlertHelper'             => __DIR__ . '/src/OspariAdmin/Helper/AlertHelper.php',
     'OspariAdmin\Model\Component'                => __DIR__ . '/src/OspariAdmin/Model/Component.php',
@@ -36,4 +37,5 @@ return array(
     'OspariAdmin\Validator\Tweet'                => __DIR__ . '/src/OspariAdmin/Validator/Tweet.php',
     'OspariAdmin\Validator\Vimeo'                => __DIR__ . '/src/OspariAdmin/Validator/Vimeo.php',
     'OspariAdmin\Validator\Youtube'              => __DIR__ . '/src/OspariAdmin/Validator/Youtube.php',
+    'OspariAdmin\Validator\Instagramm'              => __DIR__ . '/src/OspariAdmin/Validator/Instagramm.php',
 );

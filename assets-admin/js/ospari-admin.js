@@ -93,6 +93,7 @@ function loadDrafts(url) {
     $.get(url || '/admin/drafts', {query: query}, function(res) {
         if (res.success) {
             $('#draft-items-wrapper').removeClass('text-center').html(res.html);
+            $('.blog-tooltip').tooltip();
         }
         else {
             $('#draft-items-wrapper').removeClass('text-center').html('<p class="alert alert-info">No draft found!</p>');
@@ -102,12 +103,12 @@ function loadDrafts(url) {
     return false;
 }
 /***************************************************************************************************************************/
-function addMeta(draft_id,adminPath) {
+function addMeta(draft_id, adminPath) {
     if (!draft_id) {
         bootbox.alert('Not auto saved yet');
     }
 
-    var path = '/'+adminPath+'/draft/meta/' + draft_id;
+    var path = '/' + adminPath + '/draft/meta/' + draft_id;
     var callback = function(res) {
         if (res.success) {
             //$('#draft-slug-bx').html(res.message+Ospari.getEditSlugBtnTpl());
@@ -139,13 +140,13 @@ function addMeta(draft_id,adminPath) {
     });
     return false;
 }
- /******************************************************************************************************************************************/
- function updateSlug(draft_id,adminPath) {
+/******************************************************************************************************************************************/
+function updateSlug(draft_id, adminPath) {
     if (!draft_id) {
         bootbox.alert('Not auto saved yet');
     }
 
-    var path = '/'+adminPath+ '/draft/edit-slug';
+    var path = '/' + adminPath + '/draft/edit-slug';
     var callback = function(res) {
         if (res.success) {
             $('#draft-title').html();
@@ -155,7 +156,7 @@ function addMeta(draft_id,adminPath) {
         }
     };
     bootbox.dialog({
-        message:  $('#slug-form-script').html(),
+        message: $('#slug-form-script').html(),
         title: "Change Slug",
         buttons: {
             cancel: {
@@ -181,19 +182,41 @@ function addMeta(draft_id,adminPath) {
     return false;
 
 }
- /********************************************************************************************/
-function try_publish(id,adminPath,el){
-     var url = '/'+adminPath + '/draft/publish';
-     var cb = function(res) {
-         $(el).removeClass('disabled');
-        if (res.success) {           
-            bootbox.alert('<div class="alert alert-success" >Post is now published!</div>');
+/********************************************************************************************/
+function try_publish(id, adminPath, el) {
+    var url = '/' + adminPath + '/draft/publish';
+    var h = $(el).html();
+    var cb = function(res) {
+        $(el).removeClass('disabled').html('Update');
+        if (res.success) {
+            //bootbox.alert('<div class="alert alert-success" >Post is now published!</div>');
+            bootbox.dialog({
+                message: "Post is now published!",
+                title: res.message,
+                buttons: {
+                    success: {
+                        label: "Close",
+                        className: "btn-default",
+                        
+                    },
+                   
+                    main: {
+                        label: "View Post",
+                        className: "btn-primary",
+                        callback: function() {
+                           document.location = res.url;
+                        }
+                    }
+                }
+            });
         } else {
             bootbox.alert(res.message);
         }
     };
-    $(el).addClass('disabled');
-    $.fn.doPost({url: url, data: {draft_id: id, state:1}, timeout: 0, callback: cb});
+    $(el).addClass('disabled').html('<i class="fa fa-refresh fa-spin"></i>');
+    $.post(url, {draft_id: id, state: 1}, cb);
+    return false;
+    //$.fn.doPost({url: url, data: {draft_id: id, state:1}, timeout: 0, callback: cb});
 }
 /**************************************************************   
  
@@ -494,6 +517,7 @@ genericEditor = {
             }
             $('#draft-components').append(res.html);
             $('#component-0').html('').removeClass('op-component-min-height');
+            genericEditor.reloadJS();
         };
 
         $.post(url, $(this).serialize(), cb);
@@ -537,12 +561,12 @@ genericEditor = {
                 tpl = tpl.replace('{{form-action}}', genericEditor.editURL);
                 tpl = tpl.replace('{{component-id}}', componentID);
                 tpl = tpl.replace('{{comment-val}}', component.comment);
-              
+
                 tpl = tpl.replace('{{code-val}}', component.code);
                 tpl = tpl.replace('{{onsubmit}}', ' onsubmit =" return genericEditor.submitChanges(this);"');
                 bootbox.dialog({message: tpl, title: 'Edit', buttons: {}});
                 genericEditor.initWysihtml5();
-                if(setting.name =='image'){
+                if (setting.name == 'image') {
                     genericEditor.initDz(componentID);
                 }
             } else {
@@ -568,6 +592,8 @@ genericEditor = {
         tpl = tpl.replace('{{code-val}}', '');
         tpl = tpl.replace('{{onsubmit}}', '');
         tpl = tpl.replace('{{comment-val}}', '');
+        tpl = tpl.replace('{{component-id}}', '0');
+
         tpl = tpl.replace('{{form-action}}', genericEditor.addURL);
         tpl = '<div class="well well-small">' + tpl + '</div>'
         $('#component-0').html(tpl).fadeIn();
@@ -579,7 +605,11 @@ genericEditor = {
         }
         genericEditor.initWysihtml5();
         $('#component-0 form').on('submit', genericEditor.submitComponentFrom);
-        document.getElementById('component-btns').scrollIntoView();
+        //document.getElementById('component-btns').scrollIntoView();
+        
+        element = $('#component-0');
+        $('html, body').animate({ scrollTop: ($(element).offset().top)}, 'slow');
+        
         return false;
     },
     prepareTPL: function(setting) {
@@ -603,7 +633,7 @@ genericEditor = {
         scripts = document.getElementsByTagName('script');
         for (x in scripts) {
             script = scripts[x];
-            
+
 
             if (script.constructor.name === 'HTMLScriptElement') {
                 oldSrc = script.getAttribute('src');
@@ -624,7 +654,7 @@ genericEditor = {
         }
 
         return;
-      
+
 
 
     },
@@ -657,20 +687,20 @@ genericEditor = {
                             this.removeFile(file);
                             bootbox.alert(message);
                         });
-                        this.on('sending', function(file, xhr, formData){
-                            formData.append('comment',$('#component-comment').val());
-                            if(componentID !==undefined){
-                                formData.append('component_id',componentID);
+                        this.on('sending', function(file, xhr, formData) {
+                            formData.append('comment', $('#component-comment').val());
+                            if (componentID !== undefined) {
+                                formData.append('component_id', componentID);
                             }
                         });
                         this.on("success", function(file, json, xmlHttp) {
                             if (json.success) {
-                                if(json.mode=='add'){
+                                if (json.mode == 'add') {
                                     $('#component-' + json.data.id).remove();
                                     $('#draft-components').append(json.html);
                                     $('#component-0').html('').removeClass('op-component-min-height');
                                 }
-                                else{
+                                else {
                                     $('#component-' + json.data.id).html(json.html);
                                 }
                                 bootbox.hideAll();

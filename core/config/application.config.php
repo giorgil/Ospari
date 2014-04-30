@@ -11,7 +11,7 @@ if( ENV == 'dev' ){
     $host = '127.0.0.1';
     
 }else {
-    $db_name = 'ospari2';        
+    $db_name = 'ospari_blog';        
     $host = '127.0.0.1';
 }
 

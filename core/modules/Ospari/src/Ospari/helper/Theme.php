@@ -50,8 +50,17 @@ Class Theme {
         $themePath = $this->getPath();
 
         $defaultContent = file_get_contents($themePath . '/default.hbs');
-        $headers = '<meta name="generator" content="Ospari 0.1" />';
-        $defaultContent = str_replace('', $headers, $defaultContent);
+        $headers = '<meta name="generator" content="Ospari '.OSPARI_VERSION.'" />';
+        $defaultContent = str_replace('{{ghost_head}}', $headers, $defaultContent);
+        $defaultContent = str_replace('{{ospari_head}}', $headers, $defaultContent);
+        
+        $footer = '<script src="//platform.twitter.com/widgets.js"></script>'
+                . '<script src="//connect.facebook.net/en_US/all.js#xfbml=1"></script>'
+                . '<script src="//apis.google.com/js/plusone.js"></script>';
+        
+        
+        $defaultContent = str_replace('{{ghost_foot}}', $footer, $defaultContent);
+        $defaultContent = str_replace('{{ospari_foot}}', $footer, $defaultContent);
         
         $indexContent = file_get_contents($themePath . '/index.hbs');
 

@@ -68,12 +68,24 @@ class SettingController extends BaseController {
                 ->setLabelText('Email Address')
                 ->setType('email')
                 ->setRequired();
+        
         $form->createElement('img_width')
                 ->setLabelText('Max. Image Width')
                 ->setType('text')
                 ->setRequired();
         $form->createElement('img_height')
                 ->setLabelText('Max. Image Height')
+                ->setType('text')
+                ->setRequired();
+        
+        
+         $form->createElement('thumb_width')
+                ->setLabelText('Max. Thumbnail Width')
+                ->setType('text')
+                ->setRequired();
+         
+        $form->createElement('thumb_height')
+                ->setLabelText('Max. Thumbnail Height')
                 ->setType('text')
                 ->setRequired();
 
