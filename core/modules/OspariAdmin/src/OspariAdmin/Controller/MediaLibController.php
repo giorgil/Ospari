@@ -5,6 +5,7 @@ namespace OspariAdmin\Controller;
 use NZ\HttpRequest;
 use NZ\HttpResponse;
 use \OspariAdmin\Model;
+use OspariAdmin\Controller\MediaController;
 
 Class MediaLibController extends BaseController{
     
@@ -39,6 +40,20 @@ Class MediaLibController extends BaseController{
          $res->sendJson($json);
          
          
+     }
+     public function uploadAction(HttpRequest $req, HttpResponse $res){
+         if ($req->hasUpload()) {
+            $mediaCtrl = new MediaController($req, $res);
+            try {
+                $media = $mediaCtrl->handleUpload($req);
+                $res->setViewVar('item', $media);
+                $json=array('success'=>true,'html'=>$res->getViewContent('tpl/media_item.php'));
+                return $res->sendJson(json_encode($json));
+            } catch (\Exception $exc) {
+                return $res->sendErrorMessageJSON($res->getView()->renderException($exc));
+            }
+         }
+         return $res->sendErrorMessageJSON('No file uploaded!');
      }
      
      

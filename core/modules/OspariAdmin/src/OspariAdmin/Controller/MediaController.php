@@ -109,7 +109,7 @@ class MediaController extends BaseController {
         $cmp->save();
     }
 
-    private function handleUpload(HttpRequest $req) {
+    public function handleUpload(HttpRequest $req) {
         $fh = new Filehandler();
         $setting = new Setting();
         $subPath = '/' . date('Y') . '/' . date('m');

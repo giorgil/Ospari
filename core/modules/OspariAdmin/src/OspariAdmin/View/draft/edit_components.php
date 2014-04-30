@@ -138,6 +138,8 @@ $metaFormTpl.= '</div></div></form>';
     <div class="form-group">
     <label for="comment">Comment</label>
     <textarea name="comment" id="component-comment" class="form-control op-component-comment-box" rows="3">{{comment-val}}</textarea>
+        <br>
+        {{save-btn}}
     </div>
     <label for="embed_code">{{label-text}}</label>
     <div style="clear:both;" id="clear-dropzone"></div><div class="dropzone" id="dropzone"></div>
@@ -171,6 +173,7 @@ $metaFormTpl.= '</div></div></form>';
         genericEditor.editURL = '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/edit-component'; ?>';
         genericEditor.uploadURL = '/<?php echo OSPARI_ADMIN_PATH . '/media/upload?draft_id=' . $draft->id; ?>';
         genericEditor.cmpTypes = <?php echo json_encode($cmpTypes); ?>;
+        genericEditor.imgTextUrl= '/<?php echo OSPARI_ADMIN_PATH.'/draft/' . $draft->id . '/image-text/update'; ?>';
 
         $('#tag-input').tagsinput({
             typeahead: {

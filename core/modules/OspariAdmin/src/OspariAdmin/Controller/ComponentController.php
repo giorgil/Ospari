@@ -86,7 +86,34 @@ class ComponentController extends BaseController {
 
         return $res->sendJson(json_encode($obj));
     }
-
+    public function updateImgTextAction(HttpRequest $req, HttpResponse $res){
+        if (!$req->isAjax()) {
+            return $res->sendErrorMessageJSON('Bad Request');
+        }
+        if (!$req->isPOST()) {
+            return $res->sendErrorMessageJSON('Bad Request method');
+        }
+        if (!$draft_id = $req->getRouter('draft_id')) {
+            return $res->sendErrorMessageJSON('Invalid Draft ID!');
+        }
+        if (!$component_id = $req->getInt('component_id')) {
+            return $res->sendErrorMessageJSON('Invalid Component ID!');
+        }
+        $component = new Model\Component(array('id' => $component_id, 'draft_id' => $draft_id));
+        if (!$component->id) {
+            return $res->sendErrorMessageJSON('Component not found!');
+        }
+        try {
+            if($text = $req->get('comment')){
+               $component->comment = $text;
+               $component->save();
+           }
+           $data= array('success'=>true,'component'=>$component->toArray());
+           return $res->sendJson(json_encode($data));
+        } catch (\Exception $exc) {
+           return $res->sendErrorMessageJSON($res->getView()->renderException($exc));
+        }
+    }
     public function editAction(HttpRequest $req, HttpResponse $res) {
         if (!$req->isAjax()) {
             return $res->sendErrorMessageJSON('Bad Request');
@@ -127,16 +154,6 @@ class ComponentController extends BaseController {
         $cmpType = $map->get('componentType');
         $draft_id = $map->get('draft_id');
         $component = $map->get('component');
-
-        /*
-          throw new \Exception( print_r($cmpType->getValidator()) );
-
-          if(!class_exists($cmpType->getValidator(),true)){
-          throw new \Exception('Validator ('.$cmpType->validator.') no found!');
-          }
-         * 
-         */
-
         $validator = $cmpType->getValidator();
         $data = $validator->validate(new \NZ\Map(), $req);
         $component->comment = isset($data->comment) ? $data->comment : '';

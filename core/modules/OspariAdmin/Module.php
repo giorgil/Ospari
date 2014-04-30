@@ -63,13 +63,15 @@ class Module {
              '/'.OSPARI_ADMIN_PATH.'/editor' => array( __NAMESPACE__.'\Controller\DraftController',  'renderEditorAction' ),
              '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/add-component' => array( __NAMESPACE__.'\Controller\ComponentController',  'addAction' ),
              '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/edit-component' => array( __NAMESPACE__.'\Controller\ComponentController',  'editAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/draft/{draft_id}/image-text/update' => array( __NAMESPACE__.'\Controller\ComponentController',  'updateImgTextAction' ),
             
             '/'.OSPARI_ADMIN_PATH.'/component-{component_id}.json' => array( __NAMESPACE__.'\Controller\ComponentController',  'getJSONAction' ),
              '/'.OSPARI_ADMIN_PATH.'/component/embed/{component_id}' => array( __NAMESPACE__.'\Controller\ComponentController',  'embedAction' ),
-            
+            /************ Media Lib*******************/
             '/'.OSPARI_ADMIN_PATH.'/media-lib' => array( __NAMESPACE__.'\Controller\MediaLibController',  'listAction' ),
             '/'.OSPARI_ADMIN_PATH.'/media-lib/{draft_id}' => array( __NAMESPACE__.'\Controller\MediaLibController',  'listAction' ),
             '/'.OSPARI_ADMIN_PATH.'/media-lib/set-cover' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setCoverAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/media-lib/upload' => array( __NAMESPACE__.'\Controller\MediaLibController',  'uploadAction' ),
             
             
             '/install' => array( __NAMESPACE__.'\Controller\InstallController',  'installAction' ),
