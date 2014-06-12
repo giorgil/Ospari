@@ -15,11 +15,11 @@ $use_iFrame = $this->use_iFrame;
 ?>
 
 
-<div  id="draft-component-content-<?php echo $componentID ?>">
+<div  id="component-content-<?php echo $componentID ?>">
     <div class="component-comment component-comment-<?php echo $typeName; ?>" id="component-comment-<?php echo $componentID ?>"><?= $cmp->comment ?></div>
     <?php if ($componentType->name == 'image'): ?>
 
-        <div class="component-image" id="draft-component-image-<?php echo $componentID ?>">
+        <div class="component-image-image" id="draft-component-image-<?php echo $componentID ?>">
             <img src="<?php echo OSPARI_URL . '/content/upload/' . $cmp->code; ?>" >
         </div>
     <?php else: ?>
@@ -38,7 +38,8 @@ $use_iFrame = $this->use_iFrame;
 <div class="component-handle">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown"  title="Config"><i class="fa fa-2x fa-th-list"></i></a>
     <ul class="dropdown-menu">
-        <li><a href="#" data-component-id="<?php echo $cmp->id; ?>" class="component-handle-edit" title="edit" onclick=" return genericEditor.editClick(this);"><i class="fa fa-edit"></i> edit</a></li>
+        <li><a href="#" data-component-id="<?php echo $cmp->id; ?>" class="component-handle-edit" title="edit" onclick=" return OspariAdmin.editClick(this);"><i class="fa fa-edit"></i> edit</a></li>
+        <li><a href="#" data-component-id="<?php echo $cmp->id; ?>" class="component-handle-delete" title="edit" onclick=" return OspariAdmin.deleteComponent(this);"><i class="fa fa-trash-o"></i> delete</a></li>
     </ul>
 </div>
  <?php endif; ?>

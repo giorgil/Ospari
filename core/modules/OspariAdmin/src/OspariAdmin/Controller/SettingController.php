@@ -58,10 +58,12 @@ class SettingController extends BaseController {
 
         $form->createElement('logo')
                 ->setLabelText('Blog Logo')
+                 ->setHelpText('<a href="/'.OSPARI_ADMIN_PATH.'/media-lib"><i class="fa fa-star"></i> Choose from media liberary</a>')
                 ;
         
         $form->createElement('cover')
                 ->setLabelText('Blog Cover')
+                ->setHelpText('<a href="/'.OSPARI_ADMIN_PATH.'/media-lib"><i class="fa fa-star"></i> Choose from media liberary</a>')
                 ;
         
         $form->createElement('email')
@@ -71,23 +73,19 @@ class SettingController extends BaseController {
         
         $form->createElement('img_width')
                 ->setLabelText('Max. Image Width')
-                ->setType('text')
-                ->setRequired();
+                ->setType('text');
         $form->createElement('img_height')
                 ->setLabelText('Max. Image Height')
-                ->setType('text')
-                ->setRequired();
+                ->setType('text');
         
         
          $form->createElement('thumb_width')
                 ->setLabelText('Max. Thumbnail Width')
-                ->setType('text')
-                ->setRequired();
+                ->setType('text');
          
         $form->createElement('thumb_height')
                 ->setLabelText('Max. Thumbnail Height')
-                ->setType('text')
-                ->setRequired();
+                ->setType('text');
 
          $form->createElement('perpage')
                  ->setType('number')
@@ -99,6 +97,7 @@ class SettingController extends BaseController {
                 ->toSelect( $this->getThemes() )
                 ;
 
+        $form->setSubmitValue('Update');
         return $form;
     }
     

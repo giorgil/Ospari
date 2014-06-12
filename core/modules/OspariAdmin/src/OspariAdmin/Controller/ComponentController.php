@@ -38,7 +38,7 @@ class ComponentController extends BaseController {
 
             $obj = new \stdClass();
             $obj->success = true;
-            $obj->data = $component->toArray();
+            $obj->data = $component->toStdObject();
             $res->setViewVar('component', $component);
             $res->setViewVar('use_iFrame', TRUE);
             $obj->html = $this->renderCode($component, $res);
@@ -108,12 +108,30 @@ class ComponentController extends BaseController {
                $component->comment = $text;
                $component->save();
            }
-           $data= array('success'=>true,'component'=>$component->toArray());
+           $data= array('success'=>true,'component'=> $component->toStdObject());
            return $res->sendJson(json_encode($data));
         } catch (\Exception $exc) {
            return $res->sendErrorMessageJSON($res->getView()->renderException($exc));
         }
     }
+    
+    public function deleteAction(HttpRequest $req, HttpResponse $res) {
+        if (!$req->isAjax()) {
+            return $res->sendErrorMessageJSON('Bad Request');
+        }
+        if (!$req->isPOST()) {
+            return $res->sendErrorMessageJSON('Bad Request method');
+        }
+        
+        $component_id = $req->getRouter('component_id');
+        
+        $com = new Model\Component();
+        $com->delete( array( 'id' => $component_id ) );
+        
+        return $res->sendSuccessMessageJSON('Component successfully deleted');
+        
+    }
+    
     public function editAction(HttpRequest $req, HttpResponse $res) {
         if (!$req->isAjax()) {
             return $res->sendErrorMessageJSON('Bad Request');

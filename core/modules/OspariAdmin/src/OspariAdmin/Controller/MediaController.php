@@ -64,6 +64,7 @@ class MediaController extends BaseController {
                 return $res->sendErrorMessageJSON('No Upload found');
             }
         } catch (\Exception $exc) {
+            echo $exc;
             return $res->sendErrorMessageJSON($exc->getMessage());
         }
     }

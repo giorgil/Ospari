@@ -3,7 +3,7 @@ $this->setJS(OSPARI_URL . '/assets-admin/js/bootstrap3-typeahead.min.js');
 $this->setJS(OSPARI_URL . '/assets-admin/js/dropzone.js');
 $this->setJS(OSPARI_URL . '/assets-admin/js/bootstrap-tagsinput.min.js');
 $this->setJS(OSPARI_URL . '/assets-admin/js/bootstrap3-wysihtml5.all.min.js');
-$this->setJS(OSPARI_URL . '/assets-admin/js/flippant.min.js');
+
 
 $this->setJS('//platform.twitter.com/widgets.js');
 $this->setJS('//connect.facebook.net/en_US/all.js#xfbml=1');
@@ -15,7 +15,7 @@ $this->setJS('//apis.google.com/js/plusone.js');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/dropzone.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap-tagsinput.css');
 $this->setCSS(OSPARI_URL . '/assets-admin/css/bootstrap3-wysihtml5.min.css');
-$this->setCSS(OSPARI_URL . '/assets-admin/css/flippant.css');
+
 
 $title = 'Edit Components';
 $this->title = $title;
@@ -33,13 +33,13 @@ $metaFormTpl.= '</div></div></form>';
 ?>
 <div class="col-lg-6 col-lg-offset-1" id="content-preview">
 
-
-
-
 </div>
 <div class="row">
     <div class="col-md-6 col-md-offset-1">
         <div id="executive-summary">
+            <?php if( $draftCover = $draft->cover ): ?>
+            <div id="draft-cover" style="background: url('<?php echo $draftCover; ?>')"></div>
+            <?php endif; ?>
             <h1 id="draft-title"><?php echo $this->escape($draft->title); ?></h1>
             <div class="component">
                 <?php echo $draft->content; ?>
@@ -48,6 +48,7 @@ $metaFormTpl.= '</div></div></form>';
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"  title="Config"><i class="fa fa-2x fa-th-list"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="<?php echo '/' . OSPARI_ADMIN_PATH . '/draft/edit/' . $draft->id ?>" data-draft-id="<?php echo $draft->id; ?>" class="component-handle-edit" title="edit"><i class="fa fa-edit"></i> edit</a></li>
+                     <li><a href="<?php echo '/' . OSPARI_ADMIN_PATH . '/media-lib/set-draft-cover/' . $draft->id ?>" title="change cover"><i class="fa fa-star"></i> change cover</a></li>
                 </ul>
             </div>
         </div>
@@ -168,12 +169,12 @@ $metaFormTpl.= '</div></div></form>';
 <script>
 
     $(document).ready(function() {
-        genericEditor.amdinPath = '/<?php echo OSPARI_ADMIN_PATH ?>';
-        genericEditor.addURL = '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/add-component'; ?>';
-        genericEditor.editURL = '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/edit-component'; ?>';
-        genericEditor.uploadURL = '/<?php echo OSPARI_ADMIN_PATH . '/media/upload?draft_id=' . $draft->id; ?>';
-        genericEditor.cmpTypes = <?php echo json_encode($cmpTypes); ?>;
-        genericEditor.imgTextUrl= '/<?php echo OSPARI_ADMIN_PATH.'/draft/' . $draft->id . '/image-text/update'; ?>';
+        OspariAdmin.amdinPath = '/<?php echo OSPARI_ADMIN_PATH ?>';
+        OspariAdmin.addURL = '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/add-component'; ?>';
+        OspariAdmin.editURL = '/<?php echo OSPARI_ADMIN_PATH . '/draft/' . $draft->id . '/edit-component'; ?>';
+        OspariAdmin.uploadURL = '/<?php echo OSPARI_ADMIN_PATH . '/media/upload?draft_id=' . $draft->id; ?>';
+        OspariAdmin.cmpTypes = <?php echo json_encode($cmpTypes); ?>;
+        OspariAdmin.imgTextUrl= '/<?php echo OSPARI_ADMIN_PATH.'/draft/' . $draft->id . '/image-text/update'; ?>';
 
         $('#tag-input').tagsinput({
             typeahead: {

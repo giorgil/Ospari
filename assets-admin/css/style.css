@@ -127,13 +127,14 @@ Generic Editor Style
 /** components design */
 .component-code{
     display: block;
+    margin: 10px;
 }
 .component-code iframe{
     margin: 0 auto !important;
     display: block;
 }
 
-.component-image{
+.component-image-image{
     text-align: center;
 }
 
@@ -154,3 +155,40 @@ Generic Editor Style
     top: 20px;
     right: 15px;
 }
+
+#draft-cover{
+    background-size: cover !important;
+    height: 300px;
+    background-repeat: no-repeat;
+}
+
+
+.popover {
+  max-width: 640px;
+  width: auto;
+}
+
+#media-item-upload{
+    padding-top: 100px;
+}
+
+.media-item{
+    float: left;
+    height: 240px;
+    width: 220px;
+    margin: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+.media-item-image{
+    margin: 10px;
+}    
+.media-item-caption{
+    border-top: 1px solid #ccc;
+    padding: 6px;
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+}    

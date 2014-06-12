@@ -41,7 +41,7 @@
 <?php else: ?>
     <div class="row no-data-found">
         <div class="col-lg-12">
-            No data found!
+            <a href="/<?php echo OSPARI_ADMIN_PATH; ?>/draft/create" class="btn btn-default">Write your first post</a>
         </div>
     </div>
 <?php endif; ?>

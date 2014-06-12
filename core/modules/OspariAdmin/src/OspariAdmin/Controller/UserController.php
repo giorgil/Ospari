@@ -57,6 +57,7 @@ class UserController extends BaseController {
      * @return \NZ\BootstrapForm
      */
     private function createForm(\NZ\View $view, HttpRequest $req) {
+        $user = $this->getUser();
 
         $form = new \NZ\BootstrapForm($view, $req);
         $form->setID('user-edit-form');
@@ -68,16 +69,14 @@ class UserController extends BaseController {
                 ->setRequired();
 
         $form->createElement('cover')
+                 ->setHelpText('<a href="/'.OSPARI_ADMIN_PATH.'/media-lib/user-cover/'.$user->id.'"><i class="fa fa-star"></i> Choose from media liberary</a>')
                 ->setLabelText('Cover Image');
         
         $form->createElement('image')
+                 ->setHelpText('<a href="/'.OSPARI_ADMIN_PATH.'/media-lib/user-cover/'.$user->id.'"><i class="fa fa-star"></i> Choose from media liberary</a>')
                 ->setLabelText('Display Picture');
         
-        $form->createElement('image')
-                ->setLabelText('Display Picture');
-        
-        
-        $form->createElement('email')
+       $form->createElement('email')
                 ->setLabelText('Email Address')
                 ->setType('email')
                 ;

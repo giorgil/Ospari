@@ -81,7 +81,7 @@ function try_unpublish(id, adminPath) {
         }
     };
     $('.fa-eye-slash', '#row-' + id).removeClass('fa-eye-slash').addClass('fa-spinner fa-spin');
-    $.fn.doPost({url: url, data: {}, timeout: 0, callback: cb});
+    $.post(url, {}, cb);
 }
 /*************************************************************************************************************/
 function loadDrafts(url) {
@@ -197,14 +197,12 @@ function try_publish(id, adminPath, el) {
                     success: {
                         label: "Close",
                         className: "btn-default",
-                        
                     },
-                   
                     main: {
                         label: "View Post",
                         className: "btn-primary",
                         callback: function() {
-                           document.location = res.url;
+                            document.location = res.url;
                         }
                     }
                 }
@@ -223,21 +221,21 @@ function try_publish(id, adminPath, el) {
  * Generic Editor
  */
 
-genericEditor = {
+OspariAdmin = {
     init: function() {
-        $('#component-btns a').on('click', genericEditor.addComponent);
+        $('#component-btns a').on('click', OspariAdmin.addComponent);
     },
-    updateImgText: function(el){
-        var cmp_id =$(el).attr('data-component-id');
-        var cb = function(json){
-            if(json.success){
-                $('#component-comment-' +cmp_id ).html(json.component.comment);
+    updateImgText: function(el) {
+        var cmp_id = $(el).attr('data-component-id');
+        var cb = function(json) {
+            if (json.success) {
+                $('#component-comment-' + cmp_id).html(json.component.comment);
                 bootbox.hideAll();
                 return;
             }
             bootbox.alert(json.message);
         };
-        $.post(genericEditor.imgTextUrl, {'component_id':cmp_id,comment:$('#component-comment').val()}, cb);
+        $.post(OspariAdmin.imgTextUrl, {'component_id': cmp_id, comment: $('#component-comment').val()}, cb);
         return false;
     },
     submitComponentFrom: function(f) {
@@ -249,7 +247,7 @@ genericEditor = {
             }
             $('#draft-components').append(res.html);
             $('#component-0').html('').removeClass('op-component-min-height');
-            genericEditor.reloadJS();
+            OspariAdmin.reloadJS();
         };
 
         $.post(url, $(this).serialize(), cb);
@@ -264,7 +262,7 @@ genericEditor = {
                 return;
             }
             $('#component-' + res.data.id).html(res.html);
-            genericEditor.reloadJS(res.data.id);
+            OspariAdmin.reloadJS(res.data.id);
         };
         $.post(url, $(f).serialize(), cb);
         bootbox.hideAll();
@@ -274,13 +272,13 @@ genericEditor = {
     editClick: function(el) {
         var componentID = $(el).attr('data-component-id');
         $('#component-0').html('').removeClass('op-component-min-height');
-        return genericEditor.editComponent(componentID);
+        return OspariAdmin.editComponent(componentID);
     },
     editComponent: function(componentID) {
 
         var cmp = $('#component-' + componentID);
         var type = $(cmp).attr('data-component-type');
-        var setting = genericEditor.getComponentSettings(type);
+        var setting = OspariAdmin.getComponentSettings(type);
         if (!setting) {
             alert('Invalid Click');
             return;
@@ -288,59 +286,88 @@ genericEditor = {
 
         cb = function(res) {
             if (component = res.component) {
-                var tpl = genericEditor.prepareTPL(setting);
-                tpl = tpl.replace('{{form-action}}', genericEditor.editURL);
+                var tpl = OspariAdmin.prepareTPL(setting);
+                tpl = tpl.replace('{{form-action}}', OspariAdmin.editURL);
                 tpl = tpl.replace('{{component-id}}', componentID);
                 tpl = tpl.replace('{{comment-val}}', component.comment);
-                tpl = tpl.replace('{{save-btn}}','<a href="#" class="btn btn-primary pull-right" data-component-id="'+componentID+'" onclick=" return genericEditor.updateImgText(this);">Update Comment</a>');
+                tpl = tpl.replace('{{save-btn}}', '<a href="#" class="btn btn-primary pull-right" data-component-id="' + componentID + '" onclick=" return OspariAdmin.updateImgText(this);">Update Comment</a>');
                 tpl = tpl.replace('{{code-val}}', component.code);
-                tpl = tpl.replace('{{onsubmit}}', ' onsubmit =" return genericEditor.submitChanges(this);"');
+                tpl = tpl.replace('{{onsubmit}}', ' onsubmit =" return OspariAdmin.submitChanges(this);"');
                 bootbox.dialog({message: tpl, title: 'Edit', buttons: {}});
-                genericEditor.initWysihtml5();
+                OspariAdmin.initWysihtml5();
                 if (setting.name == 'image') {
-                    genericEditor.initDz(componentID);
+                    OspariAdmin.initDz(componentID);
                 }
             } else {
                 alert(res.message);
             }
         }
 
-        $.get(genericEditor.amdinPath + '/component-' + componentID + '.json', cb);
+        $.get(OspariAdmin.amdinPath + '/component-' + componentID + '.json', cb);
 
+        return false;
+    },
+    deleteComponentPremantly: function(componentID) {
+        $('#component-' + componentID).fadeOut();
+        cb = function(res) {
+            if (!res.success) {
+                bootbox.alert(res.message);
+            }
+
+        }
+
+        $.post(OspariAdmin.amdinPath + '/draft/components/delete/' + componentID, {}, cb);
+
+    },
+    deleteComponent: function(el) {
+
+        var componentID = $(el).attr('data-component-id');
+        timerID = window.setTimeout( function(){OspariAdmin.deleteComponentPremantly(componentID)}, 1500 );
+
+
+        var undoHTML = '<div class="well well-small text-center"><p>Component deleted</p><p><a href="#" class="btn btn-success" onclick="return OspariAdmin.deleteComponent.undo()"><i class="fa fa-undo"> unod</a></p></div>';
+        OspariAdmin.deleteComponent.origHTML = $('#component-' + componentID).html();
+        $('#component-' + componentID).html(undoHTML);
+        OspariAdmin.deleteComponent.undo = function() {
+            window.clearTimeout(timerID);
+            $('#component-' + componentID).html(OspariAdmin.deleteComponent.origHTML);
+            //OspariAdmin.reloadJS();
+            return false;
+        }
         return false;
     },
     addComponent: function() {
 
         var type = $(this).attr('data-component-type');
 
-        var setting = genericEditor.getComponentSettings(type);
+        var setting = OspariAdmin.getComponentSettings(type);
         if (!setting) {
             alert('Invalid Click');
             return;
         }
 
-        var tpl = genericEditor.prepareTPL(setting);
+        var tpl = OspariAdmin.prepareTPL(setting);
         tpl = tpl.replace('{{code-val}}', '');
         tpl = tpl.replace('{{onsubmit}}', '');
         tpl = tpl.replace('{{comment-val}}', '');
         tpl = tpl.replace('{{component-id}}', '0');
-        tpl = tpl.replace('{{save-btn}}','');
-        tpl = tpl.replace('{{form-action}}', genericEditor.addURL);
+        tpl = tpl.replace('{{save-btn}}', '');
+        tpl = tpl.replace('{{form-action}}', OspariAdmin.addURL);
         tpl = '<div class="well well-small">' + tpl + '</div>'
         $('#component-0').html(tpl).fadeIn();
         if (!$('#component-0').hasClass('op-component-min-height')) {
             $('#component-0').addClass('op-component-min-height');
         }
         if (setting.name === 'image') {
-            genericEditor.initDz();
+            OspariAdmin.initDz();
         }
-        genericEditor.initWysihtml5();
-        $('#component-0 form').on('submit', genericEditor.submitComponentFrom);
+        OspariAdmin.initWysihtml5();
+        $('#component-0 form').on('submit', OspariAdmin.submitComponentFrom);
         //document.getElementById('component-btns').scrollIntoView();
-        
+
         element = $('#component-0');
-        $('html, body').animate({ scrollTop: ($(element).offset().top)}, 'slow');
-        
+        $('html, body').animate({scrollTop: ($(element).offset().top) - 74}, 'slow');
+
         return false;
     },
     prepareTPL: function(setting) {
@@ -350,9 +377,9 @@ genericEditor = {
         return tpl;
     },
     getComponentSettings: function(type) {
-        var settings = genericEditor.cmpTypes;
+        var settings = OspariAdmin.cmpTypes;
         if (settings[type]) {
-            genericEditor.currentCmpSetting = settings[type];
+            OspariAdmin.currentCmpSetting = settings[type];
             return settings[type];
         }
         return null;
@@ -404,7 +431,7 @@ genericEditor = {
     initDz: function(componentID) {
         $("div#dropzone").dropzone(
                 {
-                    url: genericEditor.uploadURL + '&type_id=' + genericEditor.currentCmpSetting.id,
+                    url: OspariAdmin.uploadURL + '&type_id=' + OspariAdmin.currentCmpSetting.id,
                     parallelUploads: 1,
                     maxFilesize: 1,
                     paramName: 'image',
@@ -451,5 +478,5 @@ genericEditor = {
 
 };
 $(function() {
-    genericEditor.init();
+    OspariAdmin.init();
 });

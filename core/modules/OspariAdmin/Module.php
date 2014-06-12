@@ -45,6 +45,7 @@ class Module {
             '/'.OSPARI_ADMIN_PATH.'/draft/auto-save' => array( __NAMESPACE__.'\Controller\DraftController',  'autoSaveAction' ),
             '/'.OSPARI_ADMIN_PATH.'/media/upload' => array( __NAMESPACE__.'\Controller\MediaController',  'uploadAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/components/edit/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'editComponentsAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/draft/components/delete/{component_id}' => array( __NAMESPACE__.'\Controller\ComponentController',  'deleteAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/edit/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'editAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/delete/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'deleteAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/unpublish/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'unpublishAction' ),
@@ -69,8 +70,20 @@ class Module {
              '/'.OSPARI_ADMIN_PATH.'/component/embed/{component_id}' => array( __NAMESPACE__.'\Controller\ComponentController',  'embedAction' ),
             /************ Media Lib*******************/
             '/'.OSPARI_ADMIN_PATH.'/media-lib' => array( __NAMESPACE__.'\Controller\MediaLibController',  'listAction' ),
-            '/'.OSPARI_ADMIN_PATH.'/media-lib/{draft_id}' => array( __NAMESPACE__.'\Controller\MediaLibController',  'listAction' ),
-            '/'.OSPARI_ADMIN_PATH.'/media-lib/set-cover' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setCoverAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/media-lib/set-user-cover/{user_id}' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setUserCoverAction' ),
+             '/'.OSPARI_ADMIN_PATH.'/media-lib/set-user-image/{user_id}' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setUserImageAction' ),
+            
+            '/'.OSPARI_ADMIN_PATH.'/media-lib/draft-cover/{draft_id}' => array( __NAMESPACE__.'\Controller\MediaLibController',  'listAction' ),
+             '/'.OSPARI_ADMIN_PATH.'/media-lib/set-draft-cover' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setDraftCoverAction' ),
+            
+            '/'.OSPARI_ADMIN_PATH.'/media-lib/user-cover/{user_id}' => array( __NAMESPACE__.'\Controller\MediaLibController',  'listAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/media-lib/set-user-image' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setUserImageAction' ),
+             '/'.OSPARI_ADMIN_PATH.'/media-lib/set-user-cover' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setUserCoveAction' ),
+            
+           
+            '/'.OSPARI_ADMIN_PATH.'/media-lib/set-blog-cover' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setBlogCoverAction' ),
+            '/'.OSPARI_ADMIN_PATH.'/media-lib/set-blog-logo' => array( __NAMESPACE__.'\Controller\MediaLibController',  'setBlogLogoAction' ),
+            
             '/'.OSPARI_ADMIN_PATH.'/media-lib/upload' => array( __NAMESPACE__.'\Controller\MediaLibController',  'uploadAction' ),
             
             

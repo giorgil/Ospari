@@ -88,6 +88,7 @@ img[alt="head-image"]{display:none;}
 
 .content {
     padding: 2em 3em 0;
+    width: 60%;
 }
 
 .post {
@@ -233,3 +234,24 @@ blockquote p {
         padding: 2em 1em 0;
     }
 }
+
+
+/** components design */
+.component-code{
+    display: block;
+    margin: 10px;
+}
+.component-code iframe{
+    margin: 0 auto !important;
+    display: block;
+}
+
+.component-image-image{
+    text-align: center;
+}
+
+.fb_iframe_widget{
+   text-align: center;
+   display: block !important;
+}
+/** components design edn */

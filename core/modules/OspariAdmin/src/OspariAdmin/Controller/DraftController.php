@@ -17,6 +17,21 @@ use OspariAdmin\Validator\Text;
 
 class DraftController extends BaseController {
 
+    public function removeCoverAction(HttpRequest $req, HttpResponse $res) {
+        try {
+            $draft = new Model\Draft($req->getInt('draft_id'));
+            $draft->cover = '';
+            $draft->thumb = '';
+            $draft->save();
+            
+            return $res->sendSuccessMessageJSON('+Done');
+                
+            
+        } catch (\Exception $ex) {
+            return $res->sendErrorMessageJSON( $ex->getMessage() );
+        }
+    }
+
     public function editComponentsAction(HttpRequest $req, HttpResponse $res) {
         $draft = new Model\Draft($req->getInt('draft_id'));
         $res->setViewVar('draft', $draft);
@@ -48,7 +63,7 @@ class DraftController extends BaseController {
             }
         } else {
 
-            $draft->toHttpRequest($req);
+            $req = $draft->toHttpRequest($req);
             $form = $this->createForm($view, $req);
         }
         $res->setViewVar('form', $form);
@@ -65,27 +80,25 @@ class DraftController extends BaseController {
         if (!$req->isPOST()) {
             return $res->sendErrorMessage('Bad Request Method!');
         }
-        
+
         try {
             $post = $this->pulishDraft($req);
             $std = new \stdClass();
             $std->url = $post->getUrl();
             $std->success = TRUE;
             $std->message = 'Draft successfully published';
-            return $res->sendJson( json_encode($std) );
-            
+            return $res->sendJson(json_encode($std));
         } catch (\Exception $exc) {
-            return $res->sendErrorMessage( $exc->getMessage() );
+            return $res->sendErrorMessage($exc->getMessage());
         }
-            
     }
 
-   /**
-    * 
-    * @param type $req
-    * @return \OspariAdmin\Model\Post
-    * @throws \Exception
-    */
+    /**
+     * 
+     * @param type $req
+     * @return \OspariAdmin\Model\Post
+     * @throws \Exception
+     */
     protected function pulishDraft($req) {
         $model = new \OspariAdmin\Model\Draft($req->getInt('draft_id'));
         if (!$model->id) {
@@ -214,6 +227,10 @@ class DraftController extends BaseController {
         }
         $this->deleteDraft2Media($draft_id);
         $this->deleteDraft2Tag($draft_id);
+
+        $comp = new Model\Component();
+        $comp->delete(array('draft_id' => $model->id));
+
         $model->delete(array('id' => $model->id));
         return $res->sendSuccessMessageJSON('ok');
     }

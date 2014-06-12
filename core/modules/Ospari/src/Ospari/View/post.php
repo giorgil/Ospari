@@ -24,6 +24,8 @@ $blog = $this->blog;
 $post = $this->post;
 
 
+
+
 $post->content = $post->content.''.$componentsHTML;
 
 $data = array(

@@ -143,16 +143,17 @@ return array(
     
     "INSERT INTO `" . OSPARI_DB_PREFIX . "component_types` (`id`, `name`, `short_name`, `position`, `label`, `tpl_name`, `res_tpl_name`, `javascript`) VALUES
 (1, 'image', 'Photo', 3, 'Image', 'component-image-tpl', 'component-img-tpl-response', ''),
-(2, 'youtube_video', 'Youtube', 6, 'Embed Youtube code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
-(3, 'twitter_tweet', 'Tweet', 88, 'Embed Tweet code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
-(4, 'vimeo_video', 'Vimeo', 97, 'Embed Vimeo code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
+(2, 'youtube_video', 'Youtube', 6, 'Youtube embed code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
+(3, 'twitter_tweet', 'Tweet', 88, 'Tweet embed code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
+(4, 'vimeo_video', 'Vimeo', 97, 'Vimeo embed code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
 (5, 'html', 'Html', 99, 'HTML Code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
 (6, 'text', 'Text', 0, 'Comment', 'component-text-tpl', 'component-text-tpl-response', ''),
-(7, 'facebook_post', 'Facebook', 80, 'Embed Facebook code', 'component-all-types-tpl', 'component-all-types-tpl-response', '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = \"//connect.facebook.net/en_US/all.js#xfbml=1\"; fjs.parentNode.insertBefore(js, fjs); }(document, ''script'', ''facebook-jssdk''));</script>'),
-(8, 'google_plus_post', 'Google+', 98, 'Embed Google Plus code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
-(9, 'instagram', 'Instagram', 89, 'Instagram', 'component-all-types-tpl', 'component-all-types-tpl-response', '');",
+(7, 'facebook_post', 'Facebook', 80, 'Facebook embed code', 'component-all-types-tpl', 'component-all-types-tpl-response', '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = \"//connect.facebook.net/en_US/all.js#xfbml=1\"; fjs.parentNode.insertBefore(js, fjs); }(document, ''script'', ''facebook-jssdk''));</script>'),
+(8, 'google_plus_post', 'Google+', 98, 'Google+ embed code', 'component-all-types-tpl', 'component-all-types-tpl-response', ''),
+(9, 'instagram', 'Instagram', 89, 'Instagram embed code', 'component-all-types-tpl', 'component-all-types-tpl-response', '');",
     
     "ALTER TABLE  `" . OSPARI_DB_PREFIX . "post_meta` DROP INDEX  `key_name`",
     
-    "ALTER TABLE  `" . OSPARI_DB_PREFIX . "medias` ADD  `original` VARCHAR( 255 ) NOT NULL AFTER  `id`"
+    "ALTER TABLE  `" . OSPARI_DB_PREFIX . "medias` ADD  `original` VARCHAR( 255 ) NOT NULL AFTER  `id`",
+    "ALTER TABLE  `" . OSPARI_DB_PREFIX . "components` ADD  `media_id` INT UNSIGNED NOT NULL DEFAULT  '0' AFTER  `type_id`"
 );

@@ -80,7 +80,7 @@ $mostViewedPosts = $this->mostViewedPosts;
     <br/>
     </p>
     <p class="text-center">
-    <a href="#" onclick="return try_delete.cancel()" class="btn btn-default"><i class="fa fa-undo"></i>Undo</a>
+    <a href="#" onclick="return try_delete.cancel()" class="btn btn-default"><i class="fa fa-undo"></i> Undo</a>
     </p>
     </div>
 </script>
