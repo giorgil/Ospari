@@ -187,7 +187,7 @@ Class Bootstrap {
         if (!$db_read = $confg->get('db_read')) {
             return FALSE;
         }
-
+     
         $keys = array('database',
             'username',
             'password',

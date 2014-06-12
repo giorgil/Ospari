@@ -5,7 +5,7 @@
  */
 
 if( ENV == 'dev' ){
-    $db_name = 'ospari_blog';
+    $db_name = 'ospari2';
     error_reporting(-1);
     ini_set("display_errors", "on");
     $host = '127.0.0.1';

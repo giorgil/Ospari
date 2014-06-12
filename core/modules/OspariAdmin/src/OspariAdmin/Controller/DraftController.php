@@ -64,6 +64,7 @@ class DraftController extends BaseController {
         } else {
 
             $req = $draft->toHttpRequest($req);
+            $req->set('tags', Tag::getTagsAsString($draft_id));
             $form = $this->createForm($view, $req);
         }
         $res->setViewVar('form', $form);
@@ -272,10 +273,6 @@ class DraftController extends BaseController {
         //$model = $form->saveToModel($model);
         $model->title = $req->title;
         $model->user_id = $user->id;
-        $validator = new Text();
-        $obj = $validator->validate(new \NZ\Map(array('attr' => 'content')), $req);
-        $model->content = $obj->content;
-
         $model->setDateTime('edited_at', new \DateTime());
         $model->save();
 
@@ -346,6 +343,10 @@ class DraftController extends BaseController {
                 ->setAttribute('autofocus', 'autofocus')
                 ->setLabelText('Excerpt (Executive summary)')
                 ->setAttribute('id', 'draft-content-textarea');
+        $validator = new Text();
+        $obj = $validator->validate(new \NZ\Map(array('attr' => 'content')), $req);
+        $model->content = $obj->content;
+
         $form->createHiddenElement('state', 'draft', 'post-state-input');
 
         return $form;
