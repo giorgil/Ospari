@@ -48,6 +48,7 @@ class Module {
             '/'.OSPARI_ADMIN_PATH.'/draft/components/delete/{component_id}' => array( __NAMESPACE__.'\Controller\ComponentController',  'deleteAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/edit/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'editAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/delete/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'deleteAction' ),
+              '/'.OSPARI_ADMIN_PATH.'/draft/remove-cover/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'removeCoverAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/unpublish/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'unpublishAction' ),
             '/'.OSPARI_ADMIN_PATH.'/draft/publish' => array( __NAMESPACE__.'\Controller\DraftController',  'publishDraftAction' ),
              '/'.OSPARI_ADMIN_PATH.'/draft/meta/{draft_id}' => array( __NAMESPACE__.'\Controller\DraftController',  'metaAction' ),

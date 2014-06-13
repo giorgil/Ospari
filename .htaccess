@@ -1,5 +1,10 @@
 RewriteEngine on
 
+<FilesMatch "(composer\.lock|composer\.json)$">
+Deny from all
+</FilesMatch>
+
+
 RewriteRule ^(.*)\.(php|php4|php4|phtml)$  index.php [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f

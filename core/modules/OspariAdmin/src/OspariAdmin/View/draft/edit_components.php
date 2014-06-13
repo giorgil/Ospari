@@ -48,7 +48,8 @@ $metaFormTpl.= '</div></div></form>';
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"  title="Config"><i class="fa fa-2x fa-th-list"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="<?php echo '/' . OSPARI_ADMIN_PATH . '/draft/edit/' . $draft->id ?>" data-draft-id="<?php echo $draft->id; ?>" class="component-handle-edit" title="edit"><i class="fa fa-edit"></i> edit</a></li>
-                     <li><a href="<?php echo '/' . OSPARI_ADMIN_PATH . '/media-lib/set-draft-cover/' . $draft->id ?>" title="change cover"><i class="fa fa-star"></i> change cover</a></li>
+                    <li><a href="<?php echo '/' . OSPARI_ADMIN_PATH . '/media-lib/draft-cover/' . $draft->id ?>" title="change cover"><i class="fa fa-star"></i> change cover</a></li>
+                    <li><a href="<?php echo '/' . OSPARI_ADMIN_PATH . '/draft/remove-cover/' . $draft->id ?>" onclick="return remove_cover(this)" title="remove cover"><i class="fa fa-trash-o"></i> remove cover</a></li>
                 </ul>
             </div>
         </div>
@@ -167,6 +168,21 @@ $metaFormTpl.= '</div></div></form>';
 </script>
 
 <script>
+
+    function remove_cover(obj){
+        
+        $('#draft-cover').fadeOut();
+        $(obj).fadeOut();
+        
+        cb = function(res){
+            if( !res.success ){
+                bootbox.alert(res.message);
+            }
+        }
+        
+        $.post('/<?php echo OSPARI_ADMIN_PATH ?>/draft/remove-cover/<?php echo $draft->id ?>', {}, cb);
+        return false;
+    }
 
     $(document).ready(function() {
         OspariAdmin.amdinPath = '/<?php echo OSPARI_ADMIN_PATH ?>';

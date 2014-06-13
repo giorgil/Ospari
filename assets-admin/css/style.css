@@ -40,9 +40,16 @@ margin: 20px 0 20px;
  dropzone
 */
 .dz-default {
-    background-image:url("/assets-admin/img/upload-bg.png") !important;
-    background-position: center !important;
+    text-align: center;
+    padding: 40px;
 }
+
+.dropzone .dz-default.dz-message span {
+    display:block !important;
+    font-size: 20px;
+    color: #777;
+}
+
 .img-dropzone.dz-clickable {
 cursor: pointer;
 }
