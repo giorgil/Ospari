@@ -1,19 +1,20 @@
 <?php
 $title = 'Update Ospari';
 $this->title = $title;
-echo "<h1>{$title}</h1>";
 
 $isUptoDate = $this->isUptoDate;
 ?>
 
-<?php if ($isUptoDate) : ?>
+<div class="container">
+    <h1>Update Ospari</h1>
+   <?php if ($isUptoDate) : ?>
     <p>Your Ospari version is up to date.</p>
     <p><a href="#" class="btn btn-warning update-btn">Update anyway</a></p>
 <?php else: ?>
-    <p>Your Ospari version not up to date.</p>
+    <p>Your Ospari version is not up to date.</p>
     <p><a href="#" class="btn btn-warning update-btn">Update now</a></p>
 <?php endif; ?>
-
+</div>
 <script>
     $(document).ready(
             function() {

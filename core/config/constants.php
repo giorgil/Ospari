@@ -33,4 +33,4 @@ if( ENV == 'dev' ){
 /**
  * Do not change !!!!
  */
-define('OSPARI_VERSION', '0.2.0');
+define('OSPARI_VERSION', '1.0');
